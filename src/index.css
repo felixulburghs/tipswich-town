@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/* Huisstijl uit CLAUDE.md – worden Tailwind-klassen zoals bg-navy-950, text-red-600, ... */
+@theme {
+  --color-navy-950: #080838;
+  --color-navy-900: #081858;
+  --color-royal-700: #082888;
+  --color-royal-500: #0848b8;
+  --color-red-600: #d70719;
+  --color-orange-400: #f19029;
+  --color-white: #f8f8f8;
+
+  /* Resultaatkleuren (kalender): winst groen, gelijk grijs, verlies = red-600 */
+  --color-winst: #1fa463;
+  --color-gelijk: #8a8fa8;
+
+  --font-display: "Anton", "Impact", sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+html {
+  background: var(--color-navy-950);
+  color: var(--color-white);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

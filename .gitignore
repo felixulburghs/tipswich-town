@@ -1,0 +1,24 @@
+# Dependencies en build-output
+node_modules
+dist
+*.local
+
+# Geheimen / omgevingsvariabelen (nooit committen)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Hosting
+.vercel
+.netlify
+
+# OS- en editorbestanden
+.DS_Store
+Thumbs.db
+.idea
+.vscode/*
+!.vscode/extensions.json

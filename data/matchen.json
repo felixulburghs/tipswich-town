@@ -1,0 +1,42 @@
+{
+  "seizoen": "2026/27",
+  "reeks": "Reeks 2A Leuven",
+  "thuiszaal": "GBS De Stip Linden",
+  "matchen": [
+    { "datum": "2026-10-05", "uur": "22:00", "tegenstander": "Brazilmanen", "thuis": false, "locatie": "Wijnpers Leuven", "uitslag": { "wij": 6, "zij": 6 },
+      "selectie": [33, 10, 23, 77, 57, 25, 13, 26],
+      "doelpunten": [
+        { "speler": 25, "assist": null },
+        { "speler": 77, "assist": 23 },
+        { "speler": 77, "assist": 23 },
+        { "speler": 77, "assist": 25 },
+        { "speler": 33, "assist": 25 },
+        { "speler": 77, "assist": 33 }
+      ] },
+    { "datum": "2026-10-17", "uur": "22:00", "tegenstander": "FC Boeziness", "thuis": false, "locatie": "Sportschuur Holsbeek Mare", "uitslag": null },
+    { "datum": "2026-10-23", "uur": "22:00", "tegenstander": "De Foempers", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2026-10-31", "uur": "20:00", "tegenstander": "Amigo Forest", "thuis": false, "locatie": "Rijschool Leuven Mare", "uitslag": null },
+    { "datum": "2026-11-06", "uur": "22:00", "tegenstander": "Caradona '86", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2026-11-17", "uur": "19:00", "tegenstander": "ZVC Joow", "thuis": false, "locatie": "Sportodroom Boutersem", "uitslag": null },
+    { "datum": "2026-11-22", "uur": "17:00", "tegenstander": "Tranquilos en Casa FC", "thuis": false, "locatie": "Bart Swings Herent", "uitslag": null },
+    { "datum": "2026-12-04", "uur": "22:00", "tegenstander": "FC Brackelona", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2026-12-18", "uur": "22:00", "tegenstander": "Amigo Forest", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2027-01-14", "uur": "21:00", "tegenstander": "Stella United", "thuis": false, "locatie": "Sportschuur Holsbeek", "uitslag": null },
+    { "datum": "2027-01-22", "uur": "20:00", "tegenstander": "De Foempers", "thuis": false, "locatie": "Sportschuur Holsbeek", "uitslag": null },
+    { "datum": "2027-01-29", "uur": "22:00", "tegenstander": "Stella United", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2027-02-05", "uur": "22:00", "tegenstander": "FC Laagvliet", "thuis": false, "locatie": "Sportschuur Holsbeek", "uitslag": null },
+    { "datum": "2027-02-12", "uur": "22:00", "tegenstander": "L'équipe", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2027-02-26", "uur": "22:00", "tegenstander": "FC Boeziness", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2027-03-03", "uur": "21:00", "tegenstander": "Caradona '86", "thuis": false, "locatie": "Sportodroom Boutersem", "uitslag": null },
+    { "datum": "2027-03-12", "uur": "22:00", "tegenstander": "FC Laagvliet", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2027-03-26", "uur": "22:00", "tegenstander": "Ballieboys", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2027-04-13", "uur": "22:00", "tegenstander": "FC Brackelona", "thuis": false, "locatie": "Sportschuur Holsbeek", "uitslag": null },
+    { "datum": "2027-04-23", "uur": "22:00", "tegenstander": "ZVC Joow", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2027-05-07", "uur": "22:00", "tegenstander": "Tranquilos en Casa FC", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2027-05-21", "uur": "22:00", "tegenstander": "Brazilmanen", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null }
+  ],
+  "andereMatchen": [
+    { "omschrijving": "Eerste match van het seizoen (niet in het speelschema, in Heverlee)", "datum": null, "uur": null, "tegenstander": "Ballieboys", "thuis": false, "locatie": "Heverlee", "uitslag": { "wij": 3, "zij": 4 },
+      "doelpunten": [ { "speler": 25 }, { "speler": 77 }, { "speler": 23 } ] }
+  ]
+}
