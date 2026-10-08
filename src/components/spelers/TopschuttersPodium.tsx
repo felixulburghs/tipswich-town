@@ -51,6 +51,7 @@ export function TopschuttersPodium() {
               <SpelerFoto
                 foto={s.speler.foto}
                 alt=""
+                zonderFoto="logo"
                 className="size-14 overflow-hidden rounded-full bg-navy-900 ring-2 ring-white/20 transition group-hover:ring-orange-400 sm:size-20"
               />
               <span className="mt-2 font-display text-base leading-tight uppercase group-hover:text-orange-400 sm:text-xl">

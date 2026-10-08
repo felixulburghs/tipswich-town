@@ -32,6 +32,13 @@ export function KaartVoorkant({ speler }: { speler: Speler }) {
         className="absolute inset-x-[8%] top-[14%] bottom-[22%]"
       />
 
+      {/* Nog geen foto: schuine rode tape "Coming soon" op de plek van de foto */}
+      {!speler.foto && (
+        <span className="absolute inset-x-[-10%] top-[42%] -rotate-12 bg-red-600 py-[1.5cqw] text-center font-display text-[9cqw] tracking-wider uppercase shadow-lg shadow-navy-950/50">
+          Coming soon
+        </span>
+      )}
+
       {/* Naam onderaan op een donkere band */}
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950 via-navy-950/90 to-transparent px-[6cqw] pt-[10cqw] pb-[5cqw] text-center">
         <p className="text-[7cqw] font-semibold text-white/70">{voornaam}</p>

@@ -8,6 +8,7 @@ export function CoachKaart() {
       <SpelerFoto
         foto={coach.foto}
         alt={coach.naam}
+        zonderFoto="logo"
         className="size-16 shrink-0 overflow-hidden rounded-full bg-navy-950 ring-2 ring-orange-400/60"
       />
       <div>
