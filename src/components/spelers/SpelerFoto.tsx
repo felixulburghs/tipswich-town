@@ -31,7 +31,7 @@ export function SpelerFoto({
   if (zonderFoto === 'logo') {
     return (
       <div className={`grid place-items-center ${className}`} aria-hidden="true">
-        <img src="/logo.png" alt="" loading="lazy" decoding="async" className="w-1/2 rounded-sm" />
+        <img src="/logo.webp" alt="" loading="lazy" decoding="async" className="h-3/5 w-auto" />
       </div>
     )
   }

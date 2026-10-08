@@ -8,7 +8,7 @@ import { spelers } from '../lib/spelers'
 export function Spelers() {
   return (
     <main
-      className="min-h-svh bg-navy-950 px-4 pt-20 pb-16"
+      className="min-h-svh bg-navy-950 px-4 pt-24 pb-16 sm:pt-28"
       style={{ backgroundImage: 'radial-gradient(ellipse 70% 30% at 50% 0%, rgb(8 72 184 / 0.45), transparent 70%)' }}
     >
       <div className="mx-auto max-w-5xl">

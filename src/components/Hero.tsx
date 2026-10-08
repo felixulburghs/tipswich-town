@@ -24,14 +24,14 @@ export function Hero() {
       />
 
       <motion.img
-        src="/logo.png"
+        src="/logo.webp"
         alt="Logo Tipswich Town"
-        width={150}
-        height={150}
+        width={321}
+        height={400}
         initial={{ opacity: 0, y: -20, rotate: -8 }}
         animate={{ opacity: 1, y: 0, rotate: 0 }}
         transition={{ type: 'spring', stiffness: 200, damping: 14 }}
-        className="mb-5 size-24 rounded-2xl shadow-xl shadow-royal-500/40 ring-2 ring-white/20 sm:size-28"
+        className="mb-5 h-32 w-auto drop-shadow-[0_8px_28px_rgb(8_72_184/0.7)] sm:h-40"
       />
 
       <motion.div

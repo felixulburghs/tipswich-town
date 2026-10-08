@@ -68,7 +68,7 @@ export function SpelerDetail() {
 
   return (
     <main
-      className="min-h-svh overflow-hidden bg-navy-950 px-4 pt-20 pb-16"
+      className="min-h-svh overflow-hidden bg-navy-950 px-4 pt-24 pb-16 sm:pt-28"
       style={{ backgroundImage: 'radial-gradient(ellipse 70% 35% at 50% 0%, rgb(8 72 184 / 0.5), transparent 70%)' }}
     >
       <div className="mx-auto max-w-4xl">

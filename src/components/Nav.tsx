@@ -18,7 +18,7 @@ export function Nav() {
         <span />
       ) : (
         <NavLink to="/" aria-label="Tipswich Town, naar home">
-          <img src="/logo.png" alt="" width={150} height={150} className="size-9 rounded-lg" />
+          <img src="/logo.webp" alt="" width={321} height={400} className="h-14 w-auto drop-shadow-[0_4px_12px_rgb(8_72_184/0.6)] sm:h-16" />
         </NavLink>
       )}
       <ul className="flex gap-5 font-display text-lg tracking-wide uppercase">

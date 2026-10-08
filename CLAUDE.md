@@ -12,7 +12,7 @@ Instagram: @tipswich_town. Slogans: "Just the tip", "UP THE TIPS!", "Zaalvoetbal
 ## Stack
 - Vite + React + TypeScript, Tailwind CSS, Framer Motion voor animaties
 - Geen backend: alle data staat in `data/matchen.json` en `data/spelers.json`
-- Foto's in `public/spelers/<achternaam>.jpg`, logo in `public/logo.png`
+- Foto's in `public/spelers/<achternaam>.jpg`, logo in `public/logo.webp` (transparant), favicon in `public/favicon.png`, iPhone-icoon in `public/apple-touch-icon.png`
 - Hosting: Vercel of Netlify, gekoppeld aan GitHub
 
 ## Huisstijl (uit Instagram)
