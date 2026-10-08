@@ -2,8 +2,10 @@ import { Link, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { DatumBlok } from '../components/kalender/MatchRij'
 import { TegenstanderBadge } from '../components/kalender/TegenstanderBadge'
+import { NieuwsKaart } from '../components/nieuws/NieuwsKaart'
 import { KaartVoorkant } from '../components/spelers/KaartVoorkant'
 import { aftrapVan } from '../lib/matchen'
+import { berichtenOver } from '../lib/nieuws'
 import { buren, naamDelen, spelerMet, statsVan } from '../lib/spelers'
 import type { Speler } from '../types'
 
@@ -63,6 +65,7 @@ export function SpelerDetail() {
   }
 
   const stats = statsVan(nummer)
+  const nieuws = berichtenOver(nummer)
   const { voornaam, achternaam } = naamDelen(speler)
   const { vorige, volgende } = buren(nummer)
 
@@ -137,6 +140,22 @@ export function SpelerDetail() {
             </ul>
           )}
         </section>
+
+        {/* Nieuwsberichten over deze speler (alleen als die er zijn) */}
+        {nieuws.length > 0 && (
+          <section aria-labelledby="in-het-nieuws" className="mt-10">
+            <h2 id="in-het-nieuws" className="font-display text-2xl tracking-wide uppercase">
+              In het nieuws
+            </h2>
+            <ul className="mt-3 space-y-3">
+              {nieuws.map((b) => (
+                <li key={b.slug}>
+                  <NieuwsKaart bericht={b} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <nav aria-label="Andere spelers" className="mt-12 flex justify-between gap-3">
           <BuurLink speler={vorige} richting="vorige" />

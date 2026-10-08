@@ -4,6 +4,8 @@ import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { Nav } from './components/Nav'
 import { Home } from './pages/Home'
 import { Kalender } from './pages/Kalender'
+import { Nieuws } from './pages/Nieuws'
+import { NieuwsBericht } from './pages/NieuwsBericht'
 import { SpelerDetail } from './pages/SpelerDetail'
 import { Spelers } from './pages/Spelers'
 
@@ -28,6 +30,8 @@ export default function App() {
           <Route path="/kalender" element={<Kalender />} />
           <Route path="/spelers" element={<Spelers />} />
           <Route path="/spelers/:nummer" element={<SpelerDetail />} />
+          <Route path="/nieuws" element={<Nieuws />} />
+          <Route path="/nieuws/:slug" element={<NieuwsBericht />} />
         </Routes>
       </BrowserRouter>
     </MotionConfig>

@@ -1,0 +1,19 @@
+{
+  "_noot": "Nieuwe post? Kopieer een blok, geef een unieke slug (komt in de link: /nieuws/<slug>). Video's en foto's zet je in public/media/ en je vult hier enkel de bestandsnaam in. spelers = rugnummers van wie het bericht gaat.",
+  "berichten": [
+    {
+      "slug": "blessure-louie-baert",
+      "datum": "2026-10-08",
+      "titel": "Louie Baert voorlopig out met blessure",
+      "intro": "Slecht nieuws uit de kern: #19 Louie Baert raakte geblesseerd en kan voor onbepaalde duur niet meer meevoetballen.",
+      "tekst": [
+        "Slecht nieuws voor Tipswich Town: Louie Baert (#19) heeft een blessure opgelopen en valt voor onbepaalde duur uit. Hoe lang hij precies aan de kant staat, is nog niet duidelijk.",
+        "In de video zie je het moment waarop het gebeurde.",
+        "Louie, de hele ploeg wenst je een snel en volledig herstel. We kijken ernaar uit om je terug op het veld te zien. UP THE TIPS!"
+      ],
+      "spelers": [19],
+      "video": "louie-blessure.mp4",
+      "afbeelding": null
+    }
+  ]
+}

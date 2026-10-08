@@ -1,0 +1,15 @@
+Video's en foto's voor de nieuwspagina (map: public/media/)
+======================================
+
+Zet hier de bestanden die bij een nieuwsbericht horen, bv.:
+
+  louie-blessure.mp4   ->  hoort bij het bericht "blessure-louie-baert"
+
+In data/nieuws.json vul je bij "video" (of "afbeelding") alleen de
+bestandsnaam in, dus "louie-blessure.mp4", zonder map ervoor.
+
+Tips:
+- Gebruik kleine letters en streepjes in bestandsnamen, geen spaties.
+- Hou video's klein: liefst onder 20 MB (720p is genoeg voor op de gsm).
+  GitHub weigert bestanden groter dan 100 MB.
+- Na het toevoegen: git add . / git commit -m "..." / git push

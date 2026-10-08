@@ -30,5 +30,17 @@ export interface Speler {
   funFact: string | null
 }
 
+/** Eén bericht uit data/nieuws.json */
+export interface Nieuwsbericht {
+  slug: string // stuk van de link: /nieuws/<slug>
+  datum: string // "2026-10-08"
+  titel: string
+  intro: string
+  tekst: string[] // alinea's
+  spelers: number[] // rugnummers van wie het bericht gaat
+  video: string | null // bestandsnaam in public/media/
+  afbeelding: string | null // bestandsnaam in public/media/
+}
+
 /** Winst, Gelijk, Verlies */
 export type Resultaat = 'W' | 'G' | 'V'

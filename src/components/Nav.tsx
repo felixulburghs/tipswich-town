@@ -4,6 +4,7 @@ const links = [
   { naar: '/', tekst: 'Home' },
   { naar: '/kalender', tekst: 'Kalender' },
   { naar: '/spelers', tekst: 'Spelers' },
+  { naar: '/nieuws', tekst: 'Nieuws' },
 ]
 
 /**
@@ -21,7 +22,7 @@ export function Nav() {
           <img src="/logo.webp" alt="" width={321} height={400} className="h-14 w-auto drop-shadow-[0_4px_12px_rgb(8_72_184/0.6)] sm:h-16" />
         </NavLink>
       )}
-      <ul className="flex gap-5 font-display text-lg tracking-wide uppercase">
+      <ul className="flex gap-3 font-display text-base tracking-wide uppercase sm:gap-5 sm:text-lg">
         {links.map((l) => (
           <li key={l.naar}>
             <NavLink
