@@ -1,14 +1,18 @@
 {
-  "_noot": "Gebaseerd op de 'Selectie'-post op Instagram (1 match). Vul aan met de volledige kern, posities en foto's.",
+  "_noot": "Volledige kern volgens de LZV Cup-inschrijving (rugnummer + naam). Nooit e-mailadressen of andere contactgegevens toevoegen. Vul aan met posities, foto's en fun facts.",
   "coach": { "naam": "Mitch", "foto": null },
   "spelers": [
-    { "nummer": 33, "naam": "T. Van Hecke",         "voornaam": null,      "positie": null, "foto": null, "funFact": null },
-    { "nummer": 10, "naam": "K. Geraets",           "voornaam": null,      "positie": null, "foto": null, "funFact": null },
-    { "nummer": 23, "naam": "Y. Houssa",            "voornaam": "Yannick", "positie": null, "foto": null, "funFact": null },
-    { "nummer": 77, "naam": "J. Van Looy",          "voornaam": "Joppe",   "positie": null, "foto": null, "funFact": null },
-    { "nummer": 57, "naam": "J. Willems",           "voornaam": null,      "positie": null, "foto": null, "funFact": null },
-    { "nummer": 25, "naam": "T. Verheyden",         "voornaam": "Tuur",    "positie": null, "foto": null, "funFact": null },
-    { "nummer": 13, "naam": "C. Van Doorn Ballon",  "voornaam": null,      "positie": null, "foto": null, "funFact": null },
-    { "nummer": 26, "naam": "P. Deprez",            "voornaam": null,      "positie": null, "foto": null, "funFact": null }
+    { "nummer": 2,  "naam": "M. Bogaert",           "voornaam": "Max",         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 10, "naam": "K. Geraets",           "voornaam": "Karel",       "positie": null, "foto": null, "funFact": null },
+    { "nummer": 13, "naam": "C. Van Doorn Ballon",  "voornaam": "Cas",         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 19, "naam": "L. Baert",             "voornaam": "Louie",       "positie": null, "foto": null, "funFact": null },
+    { "nummer": 23, "naam": "Y. Houssa",            "voornaam": "Yannick",     "positie": null, "foto": null, "funFact": null },
+    { "nummer": 25, "naam": "T. Verheyden",         "voornaam": "Tuur",        "positie": null, "foto": null, "funFact": null },
+    { "nummer": 26, "naam": "P. Deprez",            "voornaam": "Pieter-Jan",  "positie": null, "foto": null, "funFact": null },
+    { "nummer": 30, "naam": "F. Delvaux",           "voornaam": "Felix",       "positie": null, "foto": null, "funFact": null },
+    { "nummer": 33, "naam": "T. Van Hecke",         "voornaam": "Thomas",      "positie": null, "foto": null, "funFact": null },
+    { "nummer": 57, "naam": "J. Willems",           "voornaam": "Jens",        "positie": null, "foto": null, "funFact": null },
+    { "nummer": 77, "naam": "J. Van Looy",          "voornaam": "Joppe",       "positie": null, "foto": null, "funFact": null },
+    { "nummer": 99, "naam": "M. Tattara",           "voornaam": "Maren",       "positie": null, "foto": null, "funFact": null }
   ]
 }
