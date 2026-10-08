@@ -4,6 +4,7 @@ import { reeks, seizoen, volgendeMatch } from '../lib/matchen'
 import { berichten, nieuwsDatum } from '../lib/nieuws'
 import { Countdown } from './Countdown'
 import { Kroon } from './Kroon'
+import { LogoKnop } from './LogoKnop'
 import { PenseelTitel } from './PenseelTitel'
 
 export function Hero() {
@@ -25,16 +26,7 @@ export function Hero() {
         }}
       />
 
-      <motion.img
-        src="/logo.webp"
-        alt="Logo Tipswich Town"
-        width={321}
-        height={400}
-        initial={{ opacity: 0, y: -20, rotate: -8 }}
-        animate={{ opacity: 1, y: 0, rotate: 0 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 14 }}
-        className="mb-5 h-32 w-auto drop-shadow-[0_8px_28px_rgb(8_72_184/0.7)] sm:h-40"
-      />
+      <LogoKnop />
 
       <motion.div
         initial={{ opacity: 0, y: -12 }}

@@ -13,3 +13,8 @@ Tips:
 - Hou video's klein: liefst onder 20 MB (720p is genoeg voor op de gsm).
   GitHub weigert bestanden groter dan 100 MB.
 - Na het toevoegen: git add . / git commit -m "..." / git push
+
+Geluid bij het logo
+-------------------
+logo-geluid.mp3  ->  speelt als je op het grote logo op de homepagina drukt.
+Hou het kort (enkele seconden) en klein (liefst onder 1 MB).
