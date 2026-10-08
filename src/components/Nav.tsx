@@ -1,4 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom'
+import { InstagramKnop } from './InstagramKnop'
 
 const links = [
   { naar: '/', tekst: 'Home' },
@@ -9,14 +10,14 @@ const links = [
 
 /**
  * Bovenbalk met logo en links. NavLink weet zelf welke pagina actief is (isActive).
- * Op home staat het grote logo al in de hero, dus daar laten we het kleine weg.
+ * Op home staat het grote logo al in de hero, dus daar staat linksboven de Instagram-knop.
  */
 export function Nav() {
   const opHome = useLocation().pathname === '/'
   return (
     <nav className="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-4 py-3 sm:px-8">
       {opHome ? (
-        <span />
+        <InstagramKnop />
       ) : (
         <NavLink to="/" aria-label="Tipswich Town, naar home">
           <img src="/logo.webp" alt="" width={321} height={400} className="h-14 w-auto drop-shadow-[0_4px_12px_rgb(8_72_184/0.6)] sm:h-16" />

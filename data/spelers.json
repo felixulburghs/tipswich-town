@@ -1,18 +1,19 @@
 {
-  "_noot": "Volledige kern volgens de LZV Cup-inschrijving (rugnummer + naam). Nooit e-mailadressen of andere contactgegevens toevoegen. Vul aan met posities, foto's en fun facts.",
+  "_noot": "Volledige kern volgens de LZV Cup-inschrijving (rugnummer + naam). Nooit e-mailadressen of andere contactgegevens toevoegen. Vul aan met posities, foto's en fun facts. status: \"geblesseerd\" toont een blessure-icoon, null = fit. kapitein = rugnummer van de kapitein (krijgt een C-icoon).",
   "coach": { "naam": "Mitch", "foto": null },
+  "kapitein": 10,
   "spelers": [
-    { "nummer": 2,  "naam": "M. Bogaert",           "voornaam": "Max",         "positie": null, "foto": null, "funFact": null },
-    { "nummer": 10, "naam": "K. Geraets",           "voornaam": "Karel",       "positie": null, "foto": null, "funFact": null },
-    { "nummer": 13, "naam": "C. Van Doorn Ballon",  "voornaam": "Cas",         "positie": null, "foto": null, "funFact": null },
-    { "nummer": 19, "naam": "L. Baert",             "voornaam": "Louie",       "positie": null, "foto": null, "funFact": null },
-    { "nummer": 23, "naam": "Y. Houssa",            "voornaam": "Yannick",     "positie": null, "foto": null, "funFact": null },
-    { "nummer": 25, "naam": "T. Verheyden",         "voornaam": "Tuur",        "positie": null, "foto": null, "funFact": null },
-    { "nummer": 26, "naam": "P. Deprez",            "voornaam": "Pieter-Jan",  "positie": null, "foto": null, "funFact": null },
-    { "nummer": 30, "naam": "F. Delvaux",           "voornaam": "Felix",       "positie": null, "foto": null, "funFact": null },
-    { "nummer": 33, "naam": "T. Van Hecke",         "voornaam": "Thomas",      "positie": null, "foto": null, "funFact": null },
-    { "nummer": 57, "naam": "J. Willems",           "voornaam": "Jens",        "positie": null, "foto": null, "funFact": null },
-    { "nummer": 77, "naam": "J. Van Looy",          "voornaam": "Joppe",       "positie": null, "foto": null, "funFact": null },
-    { "nummer": 99, "naam": "M. Tattara",           "voornaam": "Maren",       "positie": null, "foto": null, "funFact": null }
+    { "nummer": 2,  "naam": "M. Bogaert",           "voornaam": "Max",         "status": null,         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 10, "naam": "K. Geraets",           "voornaam": "Karel",       "status": null,         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 13, "naam": "C. Van Doorn Ballon",  "voornaam": "Cas",         "status": null,         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 19, "naam": "L. Baert",             "voornaam": "Louie",       "status": "geblesseerd", "positie": null, "foto": null, "funFact": null },
+    { "nummer": 23, "naam": "Y. Houssa",            "voornaam": "Yannick",     "status": null,         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 25, "naam": "T. Verheyden",         "voornaam": "Tuur",        "status": null,         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 26, "naam": "P. Deprez",            "voornaam": "Pieter-Jan",  "status": null,         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 30, "naam": "F. Delvaux",           "voornaam": "Felix",       "status": null,         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 33, "naam": "T. Van Hecke",         "voornaam": "Thomas",      "status": null,         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 57, "naam": "J. Willems",           "voornaam": "Jens",        "status": null,         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 77, "naam": "J. Van Looy",          "voornaam": "Joppe",       "status": null,         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 99, "naam": "M. Tattara",           "voornaam": "Maren",       "status": null,         "positie": null, "foto": null, "funFact": null }
   ]
 }

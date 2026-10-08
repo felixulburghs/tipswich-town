@@ -1,6 +1,8 @@
-import { naamDelen } from '../../lib/spelers'
+import { isKapitein, naamDelen } from '../../lib/spelers'
 import type { Speler } from '../../types'
 import { Kroon } from '../Kroon'
+import { BlessureIcoon, isGeblesseerd } from './BlessureIcoon'
+import { KapiteinIcoon } from './KapiteinIcoon'
 import { SpelerFoto } from './SpelerFoto'
 
 /**
@@ -25,6 +27,14 @@ export function KaartVoorkant({ speler }: { speler: Speler }) {
         <Kroon className="w-[12cqw] text-orange-400" />
         <span className="mt-[1cqw] font-display text-[14cqw]">{speler.nummer}</span>
       </div>
+
+      {/* Iconen rechtsboven, boven het grote rugnummer: kapitein en/of blessure onder elkaar */}
+      {(isKapitein(speler.nummer) || isGeblesseerd(speler.status)) && (
+        <div className="absolute top-[5cqw] right-[5cqw] z-10 flex flex-col gap-[2cqw] drop-shadow-lg">
+          {isKapitein(speler.nummer) && <KapiteinIcoon className="w-[15cqw]" />}
+          {isGeblesseerd(speler.status) && <BlessureIcoon className="w-[15cqw]" />}
+        </div>
+      )}
 
       <SpelerFoto
         foto={speler.foto}

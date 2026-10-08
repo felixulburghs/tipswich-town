@@ -25,6 +25,7 @@ export interface Speler {
   nummer: number
   naam: string // "J. Van Looy"
   voornaam: string | null
+  status: string | null // "geblesseerd" of null (fit)
   positie: string | null
   foto: string | null
   funFact: string | null

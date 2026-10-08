@@ -6,6 +6,10 @@ import { matchen } from './matchen'
 export const spelers: Speler[] = [...data.spelers].sort((a, b) => a.nummer - b.nummer)
 export const coach: Coach = data.coach
 
+/** Rugnummer van de kapitein (uit spelers.json), of null als er geen is aangeduid. */
+export const kapitein: number | null = data.kapitein ?? null
+export const isKapitein = (nummer: number) => nummer === kapitein
+
 export function spelerMet(nummer: number): Speler | undefined {
   return spelers.find((s) => s.nummer === nummer)
 }

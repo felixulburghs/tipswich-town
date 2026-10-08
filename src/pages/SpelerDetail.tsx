@@ -3,10 +3,12 @@ import { motion } from 'framer-motion'
 import { DatumBlok } from '../components/kalender/MatchRij'
 import { TegenstanderBadge } from '../components/kalender/TegenstanderBadge'
 import { NieuwsKaart } from '../components/nieuws/NieuwsKaart'
+import { BlessureIcoon, isGeblesseerd } from '../components/spelers/BlessureIcoon'
+import { KapiteinIcoon } from '../components/spelers/KapiteinIcoon'
 import { KaartVoorkant } from '../components/spelers/KaartVoorkant'
 import { aftrapVan } from '../lib/matchen'
 import { berichtenOver } from '../lib/nieuws'
-import { buren, naamDelen, spelerMet, statsVan } from '../lib/spelers'
+import { buren, isKapitein, naamDelen, spelerMet, statsVan } from '../lib/spelers'
 import type { Speler } from '../types'
 
 function StatBlok({ waarde, label }: { waarde: number; label: string }) {
@@ -95,6 +97,18 @@ export function SpelerDetail() {
             <p className="mt-2 font-display text-2xl text-red-600">
               #{speler.nummer}
               {speler.positie && <span className="ml-3 text-white/70">{speler.positie}</span>}
+              {isKapitein(speler.nummer) && (
+                <span className="ml-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 align-middle font-sans text-sm font-semibold text-white">
+                  <KapiteinIcoon className="size-5" />
+                  Kapitein
+                </span>
+              )}
+              {isGeblesseerd(speler.status) && (
+                <span className="ml-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 align-middle font-sans text-sm font-semibold text-white">
+                  <BlessureIcoon className="size-5" />
+                  Geblesseerd
+                </span>
+              )}
             </p>
           </div>
         </section>

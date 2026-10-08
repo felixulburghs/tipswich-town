@@ -112,14 +112,6 @@ export function Hero() {
         Bekijk het volledige speelschema
       </Link>
 
-      <a
-        href="https://www.instagram.com/tipswich_town/"
-        target="_blank"
-        rel="noreferrer"
-        className="mt-8 rounded-full bg-red-600 px-6 py-3 font-display tracking-wider uppercase transition hover:scale-105 hover:bg-red-600/90 active:scale-95"
-      >
-        Volg @tipswich_town
-      </a>
     </header>
   )
 }

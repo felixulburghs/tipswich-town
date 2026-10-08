@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import { motion, useMotionTemplate, useReducedMotion } from 'framer-motion'
 import { useKantel, vraagGyroscoopToestemming } from '../../hooks/useKantel'
 import type { Speler } from '../../types'
+import { isKapitein } from '../../lib/spelers'
+import { isGeblesseerd } from './BlessureIcoon'
 import { KaartVoorkant } from './KaartVoorkant'
 
 /**
@@ -23,7 +25,7 @@ export function SpelerKaart({ speler }: { speler: Speler }) {
         <Link
           to={`/spelers/${speler.nummer}`}
           onClick={vraagGyroscoopToestemming}
-          aria-label={`Bekijk de stats van ${speler.naam}`}
+          aria-label={`Bekijk de stats van ${speler.naam}${isKapitein(speler.nummer) ? ' (kapitein)' : ''}${isGeblesseerd(speler.status) ? ' (geblesseerd)' : ''}`}
           className="relative block h-full w-full rounded-2xl transition-shadow hover:shadow-2xl hover:shadow-royal-500/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
         >
           <KaartVoorkant speler={speler} />
