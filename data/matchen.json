@@ -14,6 +14,7 @@
         { "speler": 77, "assist": 33 }
       ] },
     { "datum": "2026-10-17", "uur": "22:00", "tegenstander": "FC Boeziness", "thuis": false, "locatie": "Sportschuur Holsbeek Mare", "uitslag": { "wij": 12, "zij": 6 },
+      "selectie": [10, 23, 77, 57, 25, 13, 2, 99],
       "doelpunten": [
         { "speler": 25, "assist": null },
         { "speler": 25, "assist": null },
@@ -30,6 +31,7 @@
       ],
       "assists": [25, 99, 23, 77, 77, 77, 77, 10, 57, 57, 57] },
     { "datum": "2026-10-23", "uur": "22:00", "tegenstander": "De Foempers", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": { "wij": 11, "zij": 3 },
+      "selectie": [10, 23, 77, 25, 13, 2],
       "doelpunten": [
         { "speler": 10, "assist": null },
         { "speler": 23, "assist": null },
