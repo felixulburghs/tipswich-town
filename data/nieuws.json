@@ -2,6 +2,22 @@
   "_noot": "Nieuwe post? Kopieer een blok, geef een unieke slug (komt in de link: /nieuws/<slug>). Video's en foto's zet je in public/media/ en je vult hier enkel de bestandsnaam in. spelers = rugnummers van wie het bericht gaat.",
   "berichten": [
     {
+      "slug": "blessure-thomas-van-hecke",
+      "datum": "2026-10-27",
+      "titel": "Thomas Van Hecke out na mislukte high kick",
+      "intro": "#33 Thomas Van Hecke is geblesseerd aan zijn voet. De oorzaak? Een high kick op een feestavond die niet helemaal afliep zoals gepland.",
+      "tekst": [
+        "Ook Thomas Van Hecke (#33) staat voorlopig aan de kant. Niet door een harde tackle op het veld, wel door een avondje uit dat net iets te enthousiast eindigde: na een mislukte high kick landde Thomas verkeerd op zijn voet.",
+        "Het resultaat zie je op de foto: een flink blauwe voet. Hoe lang hij precies out is, is nog niet duidelijk.",
+        "Na Louie is dit al de tweede blessure in de kern. Thomas, rust goed uit, leg dat been hoog en laat de high kicks voorlopig aan de profs over. Beterschap! UP THE TIPS!"
+      ],
+      "spelers": [
+        33
+      ],
+      "video": null,
+      "afbeelding": "thomas-blessure.webp"
+    },
+    {
       "slug": "blessure-louie-baert",
       "datum": "2026-10-08",
       "titel": "Louie Baert voorlopig out met blessure",
@@ -11,7 +27,9 @@
         "In de video zie je het moment waarop het gebeurde.",
         "Louie, de hele ploeg wenst je een snel en volledig herstel. We kijken ernaar uit om je terug op het veld te zien. UP THE TIPS!"
       ],
-      "spelers": [19],
+      "spelers": [
+        19
+      ],
       "video": "louie-blessure.mp4",
       "afbeelding": null
     }

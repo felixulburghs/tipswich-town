@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import { nieuwsDatum } from '../../lib/nieuws'
+import { nieuwsBestand, nieuwsDatum } from '../../lib/nieuws'
 import type { Nieuwsbericht } from '../../types'
 import { NieuwsVideo } from './NieuwsVideo'
 import { SpelerChip } from './SpelerChip'
 
-/** Bericht in de nieuwslijst: datum, titel, intro, video (indien aanwezig) en over wie het gaat. Kaart is klikbaar, behalve de video. */
+/** Bericht in de nieuwslijst: datum, titel, intro, video of foto (indien aanwezig) en over wie het gaat. Kaart is klikbaar, behalve de video. */
 export function NieuwsKaart({ bericht }: { bericht: Nieuwsbericht }) {
   return (
     <article className="relative rounded-2xl bg-navy-900/80 p-5 ring-1 ring-white/10 transition hover:bg-navy-900 hover:ring-white/25">
@@ -32,6 +32,16 @@ export function NieuwsKaart({ bericht }: { bericht: Nieuwsbericht }) {
         <div className="relative z-10 mt-4">
           <NieuwsVideo bestand={bericht.video} titel={bericht.titel} />
         </div>
+      )}
+      {/* Foto (als er geen video is): klikken opent het bericht, dus geen z-10 nodig */}
+      {!bericht.video && bericht.afbeelding && (
+        <img
+          src={nieuwsBestand(bericht.afbeelding)}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="mt-4 max-h-80 w-full rounded-xl object-cover ring-1 ring-white/10"
+        />
       )}
       {bericht.spelers.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">

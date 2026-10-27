@@ -1,5 +1,5 @@
 import data from '../../data/spelers.json'
-import type { Coach, Match, Speler } from '../types'
+import type { Coach, Match, Speler, SpelerRef } from '../types'
 import { matchen } from './matchen'
 
 /** Alle spelers, gesorteerd op rugnummer. */
@@ -14,9 +14,24 @@ export function spelerMet(nummer: number): Speler | undefined {
   return spelers.find((s) => s.nummer === nummer)
 }
 
-/** Rugnummer → naam uit spelers.json. Onbekend nummer? Dan tonen we gewoon "#nummer". */
-export function naamVan(nummer: number): string {
-  return spelerMet(nummer)?.naam ?? `#${nummer}`
+/**
+ * Rugnummer → naam uit spelers.json. Onbekend nummer? Dan tonen we gewoon "#nummer".
+ * Een naam als tekst is een reservespeler zonder rugnummer: "S. Ector (reserve)".
+ */
+export function naamVan(ref: SpelerRef): string {
+  if (typeof ref === 'string') return `${ref} (reserve)`
+  return spelerMet(ref)?.naam ?? `#${ref}`
+}
+
+/** Alle doelpuntenmakers van een match (één keer per goal). */
+export function goalsVan(match: Match): SpelerRef[] {
+  return (match.doelpunten ?? []).map((d) => d.speler)
+}
+
+/** Alle assistgevers van een match: gekoppeld aan een doelpunt én uit de losse assists-lijst. */
+export function assistsVan(match: Match): SpelerRef[] {
+  const bijDoelpunt = (match.doelpunten ?? []).flatMap((d) => (d.assist != null ? [d.assist] : []))
+  return [...bijDoelpunt, ...(match.assists ?? [])]
 }
 
 /** "J. Van Looy" + voornaam "Joppe" → { voornaam: "Joppe", achternaam: "Van Looy" } */
@@ -26,8 +41,8 @@ export function naamDelen(speler: Speler): { voornaam: string; achternaam: strin
 }
 
 /** [77, 23, 77] → [{ nummer: 77, aantal: 2 }, { nummer: 23, aantal: 1 }], meeste eerst. */
-export function telPerSpeler(nummers: (number | null | undefined)[]) {
-  const tellers = new Map<number, number>()
+export function telPerSpeler(nummers: (SpelerRef | null | undefined)[]) {
+  const tellers = new Map<SpelerRef, number>()
   for (const n of nummers) if (n != null) tellers.set(n, (tellers.get(n) ?? 0) + 1)
   return [...tellers]
     .map(([nummer, aantal]) => ({ nummer, aantal }))
@@ -43,9 +58,8 @@ export function statsVan(nummer: number) {
   const perMatch: { match: Match; goals: number; assists: number }[] = []
   for (const match of matchen) {
     if (!match.uitslag) continue
-    const doelpunten = match.doelpunten ?? []
-    const goals = doelpunten.filter((d) => d.speler === nummer).length
-    const assists = doelpunten.filter((d) => d.assist === nummer).length
+    const goals = goalsVan(match).filter((s) => s === nummer).length
+    const assists = assistsVan(match).filter((s) => s === nummer).length
     const speelde = match.selectie?.includes(nummer) || goals > 0 || assists > 0
     if (speelde) perMatch.push({ match, goals, assists })
   }

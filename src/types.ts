@@ -1,8 +1,14 @@
 // Vormen van de data in data/matchen.json en data/spelers.json
 
+/**
+ * Wie scoorde of een assist gaf: een rugnummer (speler uit de kern),
+ * of een naam als tekst voor een reservespeler zonder rugnummer (bv. "S. Ector").
+ */
+export type SpelerRef = number | string
+
 export interface Doelpunt {
-  speler: number // rugnummer
-  assist?: number | null // rugnummer van wie de assist gaf
+  speler: SpelerRef
+  assist?: SpelerRef | null // wie de assist gaf, als bekend is bij welk doelpunt
 }
 
 export interface Match {
@@ -13,6 +19,8 @@ export interface Match {
   locatie: string
   uitslag: { wij: number; zij: number } | null
   doelpunten?: Doelpunt[]
+  /** Assists als losse lijst, als niet bekend is bij welk doelpunt ze horen (zoals in de Instagram-stats) */
+  assists?: SpelerRef[]
   selectie?: number[] // rugnummers van wie meespeelde
 }
 

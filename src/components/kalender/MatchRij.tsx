@@ -1,8 +1,8 @@
 import { useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { aftrapVan, resultaat } from '../../lib/matchen'
-import { naamVan, telPerSpeler } from '../../lib/spelers'
-import type { Match, Resultaat } from '../../types'
+import { assistsVan, goalsVan, naamVan, telPerSpeler } from '../../lib/spelers'
+import type { Match, Resultaat, SpelerRef } from '../../types'
 import { ThuisUitIcoon } from '../ThuisUitIcoon'
 import { AgendaKnop } from './AgendaKnop'
 import { TegenstanderBadge } from './TegenstanderBadge'
@@ -35,7 +35,7 @@ export function DatumBlok({ datum }: { datum: Date | null }) {
 }
 
 /** Lijstje "J. Van Looy ×4" voor doelpunten of assists. */
-function SpelerTelling({ titel, nummers }: { titel: string; nummers: (number | null | undefined)[] }) {
+function SpelerTelling({ titel, nummers }: { titel: string; nummers: SpelerRef[] }) {
   const telling = telPerSpeler(nummers)
   return (
     <div>
@@ -45,8 +45,9 @@ function SpelerTelling({ titel, nummers }: { titel: string; nummers: (number | n
       ) : (
         <ul className="mt-1 space-y-0.5 text-sm">
           {telling.map(({ nummer, aantal }) => (
-            <li key={nummer}>
-              <span className="mr-1.5 font-display text-white/50">#{nummer}</span>
+            <li key={String(nummer)}>
+              {/* Rugnummer alleen tonen voor spelers uit de kern (reservespelers hebben er geen) */}
+              {typeof nummer === 'number' && <span className="mr-1.5 font-display text-white/50">#{nummer}</span>}
               {naamVan(nummer)}
               {aantal > 1 && <span className="ml-1 text-white/60">×{aantal}</span>}
             </li>
@@ -123,8 +124,8 @@ export function MatchRij({ match, index }: { match: Match; index: number }) {
                 className="overflow-hidden"
               >
                 <div className="grid grid-cols-2 gap-4 border-t border-white/10 px-3 py-3 sm:pl-[7.5rem]">
-                  <SpelerTelling titel="Doelpunten" nummers={(match.doelpunten ?? []).map((d) => d.speler)} />
-                  <SpelerTelling titel="Assists" nummers={(match.doelpunten ?? []).map((d) => d.assist)} />
+                  <SpelerTelling titel="Doelpunten" nummers={goalsVan(match)} />
+                  <SpelerTelling titel="Assists" nummers={assistsVan(match)} />
                 </div>
               </motion.div>
             )}

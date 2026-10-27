@@ -11,7 +11,7 @@
     { "nummer": 25, "naam": "T. Verheyden",         "voornaam": "Tuur",        "status": null,         "positie": null, "foto": null, "funFact": null },
     { "nummer": 26, "naam": "P. Deprez",            "voornaam": "Pieter-Jan",  "status": null,         "positie": null, "foto": null, "funFact": null },
     { "nummer": 30, "naam": "F. Delvaux",           "voornaam": "Felix",       "status": null,         "positie": null, "foto": null, "funFact": null },
-    { "nummer": 33, "naam": "T. Van Hecke",         "voornaam": "Thomas",      "status": null,         "positie": null, "foto": null, "funFact": null },
+    { "nummer": 33, "naam": "T. Van Hecke",         "voornaam": "Thomas",      "status": "geblesseerd", "positie": null, "foto": null, "funFact": null },
     { "nummer": 57, "naam": "J. Willems",           "voornaam": "Jens",        "status": null,         "positie": null, "foto": null, "funFact": null },
     { "nummer": 77, "naam": "J. Van Looy",          "voornaam": "Joppe",       "status": null,         "positie": null, "foto": null, "funFact": null },
     { "nummer": 99, "naam": "M. Tattara",           "voornaam": "Maren",       "status": null,         "positie": null, "foto": null, "funFact": null }
