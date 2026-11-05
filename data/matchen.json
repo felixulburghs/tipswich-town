@@ -46,7 +46,20 @@
         { "speler": "S. Ector", "assist": null }
       ],
       "assists": [10, 23, 23, 77, 77, 2, "S. Ector", "S. Ector", "S. Ector"] },
-    { "datum": "2026-10-31", "uur": "20:00", "tegenstander": "Amigo Forest", "thuis": false, "locatie": "Rijschool Leuven Mare", "uitslag": null },
+    { "datum": "2026-10-31", "uur": "20:00", "tegenstander": "Amigo Forest", "thuis": false, "locatie": "Rijschool Leuven Mare", "uitslag": { "wij": 9, "zij": 4 },
+      "selectie": [10, 13, 57, 25, 99, 19],
+      "doelpunten": [
+        { "speler": 99, "assist": null },
+        { "speler": 99, "assist": null },
+        { "speler": 99, "assist": null },
+        { "speler": 99, "assist": null },
+        { "speler": 99, "assist": null },
+        { "speler": 10, "assist": null },
+        { "speler": 10, "assist": null },
+        { "speler": 26, "assist": null },
+        { "speler": 13, "assist": null }
+      ],
+      "assists": [10, 26, "S. Ector", "S. Ector", "S. Ector", 25, 25, 57] },
     { "datum": "2026-11-06", "uur": "22:00", "tegenstander": "Caradona '86", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
     { "datum": "2026-11-17", "uur": "19:00", "tegenstander": "ZVC Joow", "thuis": false, "locatie": "Sportodroom Boutersem", "uitslag": null },
     { "datum": "2026-11-22", "uur": "17:00", "tegenstander": "Tranquilos en Casa FC", "thuis": false, "locatie": "Bart Swings Herent", "uitslag": null },
