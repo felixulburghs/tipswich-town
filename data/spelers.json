@@ -6,7 +6,7 @@
     { "nummer": 2,  "naam": "M. Bogaert",           "voornaam": "Max",         "status": null,         "positie": null, "foto": null, "funFact": null },
     { "nummer": 10, "naam": "K. Geraets",           "voornaam": "Karel",       "status": null,         "positie": null, "foto": null, "funFact": null },
     { "nummer": 13, "naam": "C. Van Doorn Ballon",  "voornaam": "Cas",         "status": null,         "positie": null, "foto": null, "funFact": null },
-    { "nummer": 19, "naam": "L. Baert",             "voornaam": "Louie",       "status": "geblesseerd", "positie": null, "foto": null, "funFact": null },
+    { "nummer": 19, "naam": "L. Baert",             "voornaam": "Louie",       "status": null,         "positie": null, "foto": null, "funFact": null },
     { "nummer": 23, "naam": "Y. Houssa",            "voornaam": "Yannick",     "status": null,         "positie": null, "foto": null, "funFact": null },
     { "nummer": 25, "naam": "T. Verheyden",         "voornaam": "Tuur",        "status": null,         "positie": null, "foto": null, "funFact": null },
     { "nummer": 26, "naam": "P. Deprez",            "voornaam": "Pieter-Jan",  "status": null,         "positie": null, "foto": null, "funFact": null },
