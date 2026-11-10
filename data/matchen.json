@@ -61,6 +61,7 @@
       ],
       "assists": [10, 26, "S. Ector", "S. Ector", "S. Ector", 25, 25, 57] },
     { "datum": "2026-11-06", "uur": "22:00", "tegenstander": "Caradona '86", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": { "wij": 11, "zij": 7 },
+      "selectie": [10, 13, 26, 99, 57, 25],
       "doelpunten": [
         { "speler": 26, "assist": null },
         { "speler": 26, "assist": null },
