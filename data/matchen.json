@@ -60,7 +60,21 @@
         { "speler": 13, "assist": null }
       ],
       "assists": [10, 26, "S. Ector", "S. Ector", "S. Ector", 25, 25, 57] },
-    { "datum": "2026-11-06", "uur": "22:00", "tegenstander": "Caradona '86", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
+    { "datum": "2026-11-06", "uur": "22:00", "tegenstander": "Caradona '86", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": { "wij": 11, "zij": 7 },
+      "doelpunten": [
+        { "speler": 26, "assist": null },
+        { "speler": 26, "assist": null },
+        { "speler": 26, "assist": null },
+        { "speler": 26, "assist": null },
+        { "speler": 99, "assist": null },
+        { "speler": 99, "assist": null },
+        { "speler": 99, "assist": null },
+        { "speler": 13, "assist": null },
+        { "speler": 57, "assist": null },
+        { "speler": 10, "assist": null },
+        { "speler": 25, "assist": null }
+      ],
+      "assists": [99, 13, 57, 57, 10] },
     { "datum": "2026-11-17", "uur": "19:00", "tegenstander": "ZVC Joow", "thuis": false, "locatie": "Sportodroom Boutersem", "uitslag": null },
     { "datum": "2026-11-22", "uur": "17:00", "tegenstander": "Tranquilos en Casa FC", "thuis": false, "locatie": "Bart Swings Herent", "uitslag": null },
     { "datum": "2026-12-04", "uur": "22:00", "tegenstander": "FC Brackelona", "thuis": true, "locatie": "GBS De Stip Linden", "uitslag": null },
