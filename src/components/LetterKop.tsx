@@ -1,23 +1,31 @@
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
+import { useIntrede } from '../lib/intrede'
 
 /**
- * Tekst waarvan de letters één voor één binnenspringen.
+ * Tekst waarvan de letters één voor één binnenspringen, zodra de intrede van de pagina vrij is
+ * (lib/intrede.ts), plus `vertraging` seconden.
  * - Elk woord is één blok dat niet breekt (whitespace-nowrap), zodat een woord nooit midden in
  *   de letters op een nieuwe regel springt.
- * - Schermlezers lezen de gewone zin (sr-only); de losse letters zijn voor hen verborgen.
+ * - Schermlezers lezen de gewone tekst (sr-only); de losse letters zijn voor hen verborgen.
+ * - als="span": binnen een titel (bv. TIPSWICH in de h1).
  */
 export function LetterKop({
   tekst,
   className = '',
-  vertraging = 0.5,
+  vertraging = 0,
+  als = 'p',
 }: {
   tekst: string
   className?: string
   vertraging?: number
+  als?: 'p' | 'span'
 }) {
+  const { vrij } = useIntrede()
+  const minder = useReducedMotion() ?? false // minder beweging: meteen leesbaar, geen letter-voor-letter
+  const Blok = als
   let n = 0
   return (
-    <p className={className}>
+    <Blok className={className}>
       <span className="sr-only">{tekst}</span>
       <span aria-hidden="true">
         {tekst.split(' ').map((woord, w) => (
@@ -26,12 +34,13 @@ export function LetterKop({
             <span className="inline-block whitespace-nowrap">
               {[...woord].map((letter) => {
                 const i = n++
+                const van = { opacity: 0, y: '0.6em', rotate: 10 }
                 return (
                   <motion.span
                     key={i}
                     className="inline-block"
-                    initial={{ opacity: 0, y: '0.6em', rotate: 10 }}
-                    animate={{ opacity: 1, y: 0, rotate: 0 }}
+                    initial={minder ? false : van}
+                    animate={vrij ? { opacity: 1, y: 0, rotate: 0 } : van}
                     transition={{ delay: vertraging + i * 0.025, type: 'spring', stiffness: 500, damping: 22 }}
                   >
                     {letter}
@@ -42,6 +51,6 @@ export function LetterKop({
           </span>
         ))}
       </span>
-    </p>
+    </Blok>
   )
 }

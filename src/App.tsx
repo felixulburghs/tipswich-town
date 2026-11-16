@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { MotionConfig, useReducedMotion } from 'framer-motion'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { BierGiet, GIET_DICHT_MS } from './components/BierGiet'
-import { BlikjesRegen } from './components/BlikjesRegen'
+import { BlikjesRegen, regenAlGezien } from './components/BlikjesRegen'
 import { Footer } from './components/Footer'
 import { Nav } from './components/Nav'
 import { SPONSOR_TAKEOVER } from './config'
+import { IntredeContext } from './lib/intrede'
 import { Home } from './pages/Home'
 import { Kalender } from './pages/Kalender'
 import { Nieuws } from './pages/Nieuws'
@@ -61,21 +62,25 @@ function Paginas() {
   )
 }
 
-/** De blikjesregen hoort bij de homepagina (één keer per sessie, zie BlikjesRegen). */
-function RegenOpHome() {
-  return useLocation().pathname === '/' ? <BlikjesRegen /> : null
-}
-
 export default function App() {
+  // De blikjesregen komt enkel als je de site binnenkomt op de homepagina, één keer per sessie.
+  // Tot de regen overgaat in de pagina blijft de homepagina in haar begin-stand (zie lib/intrede.ts).
+  const [regen] = useState(() => SPONSOR_TAKEOVER && window.location.pathname === '/' && !regenAlGezien())
+  const [vrij, setVrij] = useState(!regen)
+  const [kruis, setKruis] = useState(!regen)
+  const intrede = useMemo(() => ({ vrij, naRegen: regen, kruis }), [vrij, regen, kruis])
+
   return (
     // reducedMotion="user": wie in de gsm-instellingen "minder beweging" aanzet, krijgt geen animaties
     <MotionConfig reducedMotion="user">
-      <BrowserRouter>
-        {SPONSOR_TAKEOVER && <RegenOpHome />}
-        <Nav />
-        <Paginas />
-        <Footer />
-      </BrowserRouter>
+      <IntredeContext.Provider value={intrede}>
+        <BrowserRouter>
+          {regen && <BlikjesRegen vrij={() => setVrij(true)} kruisGeland={() => setKruis(true)} />}
+          <Nav />
+          <Paginas />
+          <Footer />
+        </BrowserRouter>
+      </IntredeContext.Provider>
     </MotionConfig>
   )
 }

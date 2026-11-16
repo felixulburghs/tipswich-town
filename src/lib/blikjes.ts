@@ -131,7 +131,7 @@ export type BlikjesOpties = {
   interactief: boolean // muis duwen/gooien, gsm vegen en kantelen
   stil?: boolean // "minder beweging": stapel in stilte berekenen, één beeld tekenen
   schudElement?: HTMLElement // schudt even bij de eerste harde landingen
-  bij?: { eersteLanding?(): void; vloerWeg?(): void }
+  bij?: { eersteLanding?(): void; vertrek?(): void; leeg?(): void } // vertrek: tijd voor de uitgang (2,92 s); leeg: alles uit beeld
 }
 
 export async function startBlikjes(o: BlikjesOpties) {
@@ -165,12 +165,20 @@ export async function startBlikjes(o: BlikjesOpties) {
   const wereld = engine.world
   const vloerY = H - (o.vloerMarge ?? VLOER_MARGE)
   const dik = 200
-  const vloer = Bodies.rectangle(B / 2, vloerY + dik / 2, B * 3, dik, { isStatic: true, friction: 0.9 })
+  // De vloer in 8 stukken, zodat hij bij de uitgang van links naar rechts kan wegvallen.
+  // Het eerste en laatste stuk lopen ver buiten beeld door, voor blikjes die tegen de muur liggen.
+  const DELEN = 8
+  const vloerDelen = Array.from({ length: DELEN }, (_, i) => {
+    const van = i === 0 ? -B : (B * i) / DELEN
+    const tot = i === DELEN - 1 ? B * 2 : (B * (i + 1)) / DELEN
+    return Bodies.rectangle((van + tot) / 2, vloerY + dik / 2, tot - van, dik, { isStatic: true, friction: 0.9 })
+  })
+  const isVloer = (k: MBody) => vloerDelen.includes(k)
   const muren = [
     Bodies.rectangle(-dik / 2, 0, dik, H * 6, { isStatic: true, friction: 0.3 }),
     Bodies.rectangle(B + dik / 2, 0, dik, H * 6, { isStatic: true, friction: 0.3 }),
   ]
-  Composite.add(wereld, [vloer, ...muren])
+  Composite.add(wereld, [...vloerDelen, ...muren])
   // Obstakels (de knop): een vast, onzichtbaar blok op dezelfde plek; de knop zelf blijft erboven getekend
   const c = o.canvas.getBoundingClientRect()
   const obstakels = (o.obstakels ?? []).map((el) => {
@@ -233,18 +241,29 @@ export async function startBlikjes(o: BlikjesOpties) {
   const druppels: Druppel[] = []
   let hardeLandingen = 0
   let eersteLanding = false
+  let slamGeland = false
   Events.on(engine, 'collisionStart', (e: { pairs: MBody[] }) => {
     for (const p of e.pairs) {
       const { bodyA: a, bodyB: b, collision } = p
       if (!a.plugin.blik && !b.plugin.blik) continue
-      const raaktVloer = a === vloer || b === vloer
+      const raaktVloer = isVloer(a) || isVloer(b)
       if (raaktVloer && !eersteLanding) {
         eersteLanding = true
         o.bij?.eersteLanding?.()
       }
+      // Het allerlaatste blikje van de uitgang: altijd een schok, en de stapel veert even in
+      const slam = (a.plugin.slam || b.plugin.slam) && !slamGeland
+      if (slam) {
+        slamGeland = true
+        o.canvas.style.transformOrigin = '50% 100%'
+        o.canvas.animate([{ transform: 'none' }, { transform: 'scaleY(0.97)' }, { transform: 'none' }], {
+          duration: 180,
+          easing: 'ease-out',
+        })
+      }
       const n = collision.normal
       const snelheid = Math.abs((a.velocity.x - b.velocity.x) * n.x + (a.velocity.y - b.velocity.y) * n.y)
-      if (snelheid < 7) continue
+      if (snelheid < 7 && !slam) continue
       const punt = collision.supports[0] ?? a.position
       if (druppels.length < 90) {
         for (let i = 0; i < 8; i++) {
@@ -260,7 +279,7 @@ export async function startBlikjes(o: BlikjesOpties) {
           })
         }
       }
-      if (hardeLandingen++ < 4 && o.schudElement) {
+      if ((hardeLandingen++ < 4 || slam) && o.schudElement) {
         const dx = willekeurig(2, 4) * (Math.random() < 0.5 ? -1 : 1)
         const dy = willekeurig(2, 4) * (Math.random() < 0.5 ? -1 : 1)
         o.schudElement.animate(
@@ -339,7 +358,7 @@ export async function startBlikjes(o: BlikjesOpties) {
     for (let i = 0; i < aantal; i++) voegToe(willekeurig(0, B), willekeurig(H * 0.1, H * 0.7), 0)
     for (let i = 0; i < 300; i++) Engine.update(engine, 1000 / 60)
     tekenMidden()
-    return { laatVallen() {}, stop() {} }
+    return { laatVallen() {}, slamBlik() {}, stop() {} }
   }
 
   // --- Draaiboek (ms na het verschijnen van de titel) ---
@@ -472,7 +491,8 @@ export async function startBlikjes(o: BlikjesOpties) {
       o.canvas.dataset.aantal = String(blikjes.length)
     })
   // 3,0 s: vloer weg
-  if (!o.bui) plan(2500, () => o.bij?.vloerWeg?.())
+  // 2,92 s: de uitgang begint (de component regelt de rest: laatste blikje, vloer weg, rode scherm weg)
+  if (!o.bui) plan(2420, () => o.bij?.vertrek?.())
   gepland.sort((a, b) => a.t - b.t)
 
   // --- Interactie (midden-laag) ---
@@ -538,6 +558,8 @@ export async function startBlikjes(o: BlikjesOpties) {
   let frameMs = 1000 / 60
   let frames = 0
   let teTraag = false // gemiddeld onder 50 fps: geen nieuwe natuurkunde-blikjes meer
+  let leegGemeld = false
+  let versnelling = 1 // 2 bij overslaan
   let raf = 0
 
   function stap(nu: number) {
@@ -558,7 +580,7 @@ export async function startBlikjes(o: BlikjesOpties) {
 
     for (const lijst of [achterlijst, voorlijst])
       for (const z of lijst) {
-        if (vallen) z.vy += 0.004 * dt
+        if (vallen) z.vy += 0.004 * versnelling * dt
         z.x += z.vx * dt
         z.y += z.vy * dt
         z.hoek += z.draai * dt
@@ -570,6 +592,19 @@ export async function startBlikjes(o: BlikjesOpties) {
       d.y += d.vy * dt
       d.leven -= dt / 450
       if (d.leven <= 0) druppels.splice(i, 1)
+    }
+
+    // Na het wegvallen: melden zodra niets meer in beeld is (dan pas mag het scherm weg, nooit eerder)
+    if (vallen && !leegGemeld) {
+      const weg = (y: number, h: number) => y - h > H
+      if (
+        blikjes.every((k) => weg(k.body.position.y, k.h)) &&
+        [...achterlijst, ...voorlijst].every((z) => weg(z.y, z.h)) &&
+        !druppels.length
+      ) {
+        leegGemeld = true
+        o.bij?.leeg?.()
+      }
     }
 
     tekenZwevers(achter, achterlijst, achterSprite)
@@ -592,20 +627,44 @@ export async function startBlikjes(o: BlikjesOpties) {
   document.addEventListener('visibilitychange', opZichtbaar)
   opruimen.push(() => document.removeEventListener('visibilitychange', opZichtbaar))
 
-  /** De vloer (en de knop) valt weg: alle blikjes vallen uit beeld. */
-  function laatVallen() {
+  /** Het allerlaatste blikje van de uitgang: snel, ergens in het midden, met een schok als het neerkomt. */
+  function slamBlik() {
+    voegToe(B * willekeurig(0.35, 0.65), -breedte * 1.6, 2.2)
+    blikjes[blikjes.length - 1].body.plugin.slam = true
+  }
+
+  /**
+   * De vloer (en de knop) valt weg: alle blikjes vallen uit beeld.
+   * spreiding: ms waarover de vloerstukken van links naar rechts wegvallen. snel: 2 = overslaan (dubbel zo snel).
+   */
+  function laatVallen({ spreiding = 0, snel = 1 }: { spreiding?: number; snel?: number } = {}) {
     if (vallen) return
     vallen = true
+    versnelling = snel
     gepland.length = 0
-    Composite.remove(wereld, [vloer, ...obstakels])
+    Composite.remove(wereld, obstakels)
     if (muisBeperking) Composite.remove(wereld, muisBeperking)
     engine.gravity.x = 0
-    engine.gravity.y = 2.6
-    wekAlles()
+    engine.gravity.y = 2.6 * snel
+    vloerDelen.forEach((deel, i) => {
+      const doe = () => {
+        Composite.remove(wereld, deel)
+        // Blikjes boven dit stuk wakker maken en een extra draai geven
+        for (const { body } of blikjes)
+          if (body.bounds.max.x > deel.bounds.min.x && body.bounds.min.x < deel.bounds.max.x) {
+            Sleeping.set(body, false)
+            Body.setAngularVelocity(body, body.angularVelocity + willekeurig(-0.12, 0.12))
+          }
+      }
+      if (spreiding <= 0) doe()
+      else gepland.push({ t: scene + (i / (DELEN - 1)) * spreiding, doe })
+    })
+    gepland.sort((a, b) => a.t - b.t)
   }
 
   return {
     laatVallen,
+    slamBlik,
     stop() {
       cancelAnimationFrame(raf)
       opruimen.forEach((f) => f())

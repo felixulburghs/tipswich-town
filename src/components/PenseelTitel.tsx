@@ -5,7 +5,19 @@ import { motion } from 'framer-motion'
  * Titel met een rode "geschilderde" penseelstreek erachter.
  * De streek wordt van links naar rechts "geverfd" (scaleX 0 → 1) zodra hij in beeld komt.
  */
-export function PenseelTitel({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function PenseelTitel({
+  children,
+  className = '',
+  vrij,
+  vertraging = 0,
+}: {
+  children: ReactNode
+  className?: string
+  /** Zelf bepalen wanneer de streek geverfd wordt (takeover-hero), i.p.v. zodra hij in beeld komt. */
+  vrij?: boolean
+  vertraging?: number
+}) {
+  const opSignaal = vrij !== undefined
   return (
     <span className={`relative inline-block px-4 py-1 ${className}`}>
       <motion.svg
@@ -14,9 +26,13 @@ export function PenseelTitel({ children, className = '' }: { children: ReactNode
         aria-hidden="true"
         className="absolute inset-0 h-full w-full origin-left text-red-600"
         initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, ease: 'easeOut', delay: 0.2 }}
+        {...(opSignaal
+          ? { animate: { scaleX: vrij ? 1 : 0 }, transition: { duration: 0.45, ease: 'easeOut', delay: vertraging } }
+          : {
+              whileInView: { scaleX: 1 },
+              viewport: { once: true },
+              transition: { duration: 0.5, ease: 'easeOut', delay: 0.2 },
+            })}
       >
         <path
           fill="currentColor"

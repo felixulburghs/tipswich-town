@@ -21,15 +21,16 @@ const LOGO = '/logo.webp'
  * logo klikt, dus hier spelen we het altijd af. De MotionConfig moet rond de component
  * staan die useAnimate gebruikt, daarom zijn er twee lagen: LogoKnop en LogoKnopInhoud.
  */
-export function LogoKnop() {
+/** eigenIntrede={false}: de knop komt niet zelf binnen (de takeover-hero regelt dat in zijn cascade). */
+export function LogoKnop({ eigenIntrede = true }: { eigenIntrede?: boolean }) {
   return (
     <MotionConfig reducedMotion="never">
-      <LogoKnopInhoud />
+      <LogoKnopInhoud eigenIntrede={eigenIntrede} />
     </MotionConfig>
   )
 }
 
-function LogoKnopInhoud() {
+function LogoKnopInhoud({ eigenIntrede }: { eigenIntrede: boolean }) {
   const geluid = useRef<HTMLAudioElement | null>(null)
   const [logo, animeer] = useAnimate()
   // Elke klik krijgt een nieuw nummer; als "key" gebruikt laat React de streep en ring
@@ -64,7 +65,7 @@ function LogoKnopInhoud() {
       type="button"
       onClick={speel}
       aria-label="Tipswich Town-logo: speel het clubgeluid"
-      initial={{ opacity: 0, y: -20, rotate: -8 }}
+      initial={eigenIntrede ? { opacity: 0, y: -20, rotate: -8 } : false}
       animate={{ opacity: 1, y: 0, rotate: 0 }}
       transition={{ type: 'spring', stiffness: 200, damping: 14 }}
       whileHover={{ scale: 1.04 }}

@@ -48,14 +48,15 @@ function Vakje({ waarde, label }: { waarde: number; label: string }) {
   )
 }
 
-export function Countdown({ match }: { match: Match }) {
+/** eigenIntrede={false}: niet zelf binnenkomen (de takeover-hero regelt dat in zijn cascade). */
+export function Countdown({ match, eigenIntrede = true }: { match: Match; eigenIntrede?: boolean }) {
   const nu = useNu()
   const { dagen, uren, min, sec } = splitsTijd(aftrapVan(match)!.getTime() - nu.getTime()) // volgendeMatch() heeft altijd een datum
 
   return (
     <motion.section
       aria-labelledby="volgende-match"
-      initial={{ opacity: 0, y: 24 }}
+      initial={eigenIntrede ? { opacity: 0, y: 24 } : false}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.5 }}
       className="w-full max-w-md text-left rounded-2xl bg-gradient-to-br from-royal-700 to-navy-900 p-5 shadow-2xl shadow-royal-500/20 ring-1 ring-lijn"

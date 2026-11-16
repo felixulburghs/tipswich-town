@@ -1,4 +1,8 @@
+import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { NavLink, useLocation } from 'react-router-dom'
+import { SPONSOR_TAKEOVER } from '../config'
+import { useOpkomst } from '../lib/intrede'
 import { InstagramKnop } from './InstagramKnop'
 
 const links = [
@@ -14,10 +18,16 @@ const links = [
  */
 export function Nav() {
   const opHome = useLocation().pathname === '/'
+  // Takeover: binnenkomen op home = de nav-pil valt als eerste stap van de cascade naar binnen (lib/intrede.ts)
+  const [cascade] = useState(() => SPONSOR_TAKEOVER && opHome)
+  const o = useOpkomst()
+  const val = cascade ? o(0, { opacity: 0, y: -40 }) : { initial: false as const }
   return (
     <nav className="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-4 py-3 sm:px-8">
       {opHome ? (
-        <InstagramKnop />
+        <motion.div {...val}>
+          <InstagramKnop />
+        </motion.div>
       ) : (
         <NavLink to="/" aria-label="Tipswich Town, naar home">
           <img
@@ -31,7 +41,10 @@ export function Nav() {
         </NavLink>
       )}
       {/* Tout Bien-thema: rode pil met crème pilknoppen; op gsm normale letterbreedte zodat alles past */}
-      <ul className="flex gap-3 font-display text-base tracking-wide uppercase sm:gap-5 sm:text-lg toutbien:gap-1 toutbien:rounded-full toutbien:bg-red-600 toutbien:p-1 toutbien:text-xs toutbien:tracking-normal sm:toutbien:text-base sm:toutbien:[font-stretch:125%]">
+      <motion.ul
+        {...val}
+        className="flex gap-3 font-display text-base tracking-wide uppercase sm:gap-5 sm:text-lg toutbien:gap-1 toutbien:rounded-full toutbien:bg-red-600 toutbien:p-1 toutbien:text-xs toutbien:tracking-normal sm:toutbien:text-base sm:toutbien:[font-stretch:125%]"
+      >
         {links.map((l) => (
           <li key={l.naar}>
             <NavLink
@@ -49,7 +62,7 @@ export function Nav() {
             </NavLink>
           </li>
         ))}
-      </ul>
+      </motion.ul>
     </nav>
   )
 }
