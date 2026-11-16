@@ -22,6 +22,13 @@ Instagram: @tipswich_town. Slogans: "Just the tip", "UP THE TIPS!", "Zaalvoetbal
 - Sponsorbestanden in `public/sponsors/` (enkel van Felix, nooit van hun site halen). De `.webp`-blikjes zijn verkleinde kopieën van de `.png`'s; maak ze opnieuw als die PNG's veranderen.
 - De sponsorstrook in de footer blijft staan als de takeover uit is.
 
+## SEO en voorrenderen
+- `npm run build` rendert elke pagina voor naar echte HTML (`scripts/prerender.mjs` + `src/entry-server.tsx`); de browser neemt die over met `hydrateRoot`. Geen Next.js.
+- Titel, beschrijving, canonieke URL, Open Graph/Twitter en JSON-LD per pagina komen uit `src/lib/seo.ts`; daar staat ook de lijst pagina's voor `sitemap.xml`. Nieuwe spelers of berichten komen er vanzelf in.
+- Render nooit iets dat van de tijd, `window` of "minder beweging" afhangt: dan wijkt de browser af van de voorgerenderde HTML. Tijd: `useNu()` uit `src/lib/nu.ts`.
+- De `google-site-verification`-tag in `index.html` moet altijd in elke pagina blijven staan.
+- Inline scripts en CSP: er is precies één inline script, het blikjesregen-script in `<head>` (gezet door `vite.config.ts`, enkel met de takeover aan). Hou het klein en statisch: geen waarden die per build veranderen (de buildtijd staat daarom als `data-bouwtijd` op `<html>`, niet in een script). Bij de Content-Security-Policy dit script toelaten via zijn hash, **nooit** met `'unsafe-inline'`: `script-src 'self' 'sha256-S4hkLmKjV1HBZBo7qXGb3kOx6ilDjXu6aBjuW9gI9Ok=' https://cloud.umami.is`. Verander je het script, bereken de hash opnieuw (sha256 van de tekst tussen `<script>` en `</script>`, base64) en pas de CSP aan.
+
 ## Huisstijl (uit Instagram)
 | Token        | Hex       | Gebruik                                   |
 |--------------|-----------|-------------------------------------------|

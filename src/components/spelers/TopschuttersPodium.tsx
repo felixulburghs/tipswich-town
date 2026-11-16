@@ -15,8 +15,15 @@ function Teller({ waarde }: { waarde: number }) {
   const minderBeweging = useReducedMotion()
 
   useEffect(() => {
-    if (!inBeeld || minderBeweging || !ref.current) return
+    if (!ref.current) return
     const el = ref.current
+    // Minder beweging: meteen het juiste getal. (Niet al in de render, want de voorgerenderde HTML
+    // weet niet wie minder beweging wil: dan zou React de HTML niet kunnen overnemen.)
+    if (minderBeweging) {
+      el.textContent = String(waarde)
+      return
+    }
+    if (!inBeeld) return
     const telling = animate(0, waarde, {
       duration: 1.2,
       ease: 'easeOut',
@@ -25,7 +32,7 @@ function Teller({ waarde }: { waarde: number }) {
     return () => telling.stop()
   }, [inBeeld, minderBeweging, waarde])
 
-  return <span ref={ref}>{minderBeweging ? waarde : 0}</span>
+  return <span ref={ref}>0</span>
 }
 
 /**

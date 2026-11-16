@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { MotionConfig, useReducedMotion } from 'framer-motion'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { BierGiet, GIET_DICHT_MS } from './components/BierGiet'
-import { BlikjesRegen, regenAlGezien } from './components/BlikjesRegen'
+import { BlikjesRegen } from './components/BlikjesRegen'
 import { Footer } from './components/Footer'
 import { Nav } from './components/Nav'
 import { SPONSOR_TAKEOVER } from './config'
 import { IntredeContext } from './lib/intrede'
+import { zetKop } from './lib/seo'
 import { Home } from './pages/Home'
 import { Kalender } from './pages/Kalender'
 import { Nieuws } from './pages/Nieuws'
@@ -18,6 +19,7 @@ import { Spelers } from './pages/Spelers'
  * De pagina's. Tijdens de takeover is elke paginawissel een "pour" (BierGiet): het bier stijgt,
  * en pas als het scherm vol is tonen we de nieuwe pagina (getoond), onzichtbaar eronder.
  * Zonder takeover of met "minder beweging" wisselt de pagina meteen, zoals vroeger.
+ * Bij een nieuwe pagina: terug naar boven scrollen en de <head> bijwerken (titel, beschrijving, ... uit lib/seo.ts).
  */
 function Paginas() {
   const location = useLocation()
@@ -42,9 +44,10 @@ function Paginas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- enkel reageren op een nieuwe locatie
   }, [location])
 
-  // Terug naar boven scrollen bij een nieuwe pagina (de browser doet dat niet vanzelf in een React-app)
+  // De browser scrollt in een React-app niet vanzelf naar boven
   useEffect(() => {
     window.scrollTo(0, 0)
+    zetKop(pagina.pathname)
   }, [pagina.pathname])
 
   return (
@@ -62,10 +65,22 @@ function Paginas() {
   )
 }
 
-export default function App() {
-  // De blikjesregen komt enkel als je de site binnenkomt op de homepagina, één keer per sessie.
-  // Tot de regen overgaat in de pagina blijft de homepagina in haar begin-stand (zie lib/intrede.ts).
-  const [regen] = useState(() => SPONSOR_TAKEOVER && window.location.pathname === '/' && !regenAlGezien())
+/**
+ * Komt de blikjesregen? Dat beslist een klein script in <head> (vite.config.ts) nog vóór de eerste pixel:
+ * enkel bij binnenkomen op de homepagina, één keer per sessie. Het zet data-regen="1" op <html>.
+ * Bij het voorrenderen (geen document) is het antwoord altijd nee; de HTML is daardoor voor iedereen gelijk.
+ */
+const regenKomt = () => typeof document !== 'undefined' && document.documentElement.dataset.regen === '1'
+
+/**
+ * De site zonder router. In de browser zit hij in een BrowserRouter (hieronder),
+ * bij het bouwen in een StaticRouter (src/entry-server.tsx) om elke pagina als HTML voor te renderen.
+ */
+export function Site() {
+  const opHome = useLocation().pathname === '/'
+  // Tot de regen overgaat in de pagina blijft de homepagina in haar begin-stand (zie lib/intrede.ts)
+  const [regen] = useState(regenKomt)
+  const [regenWeg, setRegenWeg] = useState(false)
   const [vrij, setVrij] = useState(!regen)
   const [kruis, setKruis] = useState(!regen)
   const intrede = useMemo(() => ({ vrij, naRegen: regen, kruis }), [vrij, regen, kruis])
@@ -74,13 +89,27 @@ export default function App() {
     // reducedMotion="user": wie in de gsm-instellingen "minder beweging" aanzet, krijgt geen animaties
     <MotionConfig reducedMotion="user">
       <IntredeContext.Provider value={intrede}>
-        <BrowserRouter>
-          {regen && <BlikjesRegen vrij={() => setVrij(true)} kruisGeland={() => setKruis(true)} />}
-          <Nav />
-          <Paginas />
-          <Footer />
-        </BrowserRouter>
+        {/* Altijd in de HTML van de homepagina (zo is die voor iedereen gelijk); CSS toont hem enkel bij data-regen */}
+        {SPONSOR_TAKEOVER && opHome && !regenWeg && (
+          <BlikjesRegen
+            actief={regen}
+            vrij={() => setVrij(true)}
+            kruisGeland={() => setKruis(true)}
+            opgeruimd={() => setRegenWeg(true)}
+          />
+        )}
+        <Nav />
+        <Paginas />
+        <Footer />
       </IntredeContext.Provider>
     </MotionConfig>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Site />
+    </BrowserRouter>
   )
 }

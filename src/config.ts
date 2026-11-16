@@ -5,6 +5,9 @@
  */
 export const SPONSOR_TAKEOVER = true
 
+/** sessionStorage-sleutel: de blikjesregen speelt één keer per sessie (ook gelezen door het script in vite.config.ts). */
+export const REGEN_SLEUTEL = 'toutbien-drop-gezien'
+
 export const SPONSOR = {
   naam: 'Tout Bien',
   url: 'https://toutbienpils.com',

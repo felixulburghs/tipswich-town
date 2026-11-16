@@ -29,14 +29,16 @@ const eind = (van: Van): TargetAndTransition =>
 /**
  * Props voor één element van de cascade: blijft in zijn begin-stand (`van`) tot de intrede vrij is,
  * en komt dan op zijn beurt (stap × 60 ms) binnen. Enkel transform en opacity, dus geen verspringen.
- * Minder beweging: meteen in de eindstand, zonder animatie.
+ * Minder beweging: na het eerste beeld meteen in de eindstand, zonder animatie.
  */
 export function useOpkomst() {
   const { vrij } = useIntrede()
   const minder = useReducedMotion() ?? false
+  // Zelfde beginstand voor iedereen (de voorgerenderde HTML weet niet wie minder beweging wil);
+  // bij minder beweging gaat het daarna in één keer naar de eindstand.
   return (stap: number, van: Van, extra: Transition = {}) =>
     minder
-      ? { initial: false as const }
+      ? { initial: van, animate: eind(van), transition: { duration: 0 } }
       : {
           initial: van,
           animate: vrij ? eind(van) : van,

@@ -5,6 +5,7 @@ import { MaandGroep } from '../components/kalender/MaandGroep'
 import { SeizoensBalk } from '../components/kalender/SeizoensBalk'
 import { PenseelTitel } from '../components/PenseelTitel'
 import { matchen, perMaand, seizoen, volgendeMatch } from '../lib/matchen'
+import { useNu } from '../lib/nu'
 import type { Match } from '../types'
 
 const filterRegels: Record<Filter, (m: Match) => boolean> = {
@@ -18,7 +19,7 @@ const filterRegels: Record<Filter, (m: Match) => boolean> = {
 /** Speelschema: seizoensbalk, volgende match, filters en alle matchen per maand. */
 export function Kalender() {
   const [filter, setFilter] = useState<Filter>('Alles')
-  const volgende = volgendeMatch()
+  const volgende = volgendeMatch(useNu().tijd)
   const maanden = perMaand(matchen.filter(filterRegels[filter]))
 
   return (

@@ -167,6 +167,14 @@
   }
 }
 
+/* Blikjesregen: enkel zichtbaar als het script in <head> besliste dat hij komt (zie vite.config.ts) */
+.regen-scherm {
+  display: none;
+}
+[data-regen='1'] .regen-scherm {
+  display: block;
+}
+
 /* Blikjesregen: de rafelige penseelrand onderaan het rode scherm schuift wat op terwijl het wegtrekt */
 @keyframes penseelrand {
   to {

@@ -4,6 +4,7 @@ import { SPONSOR, SPONSOR_KOP, SPONSOR_TAKEOVER } from '../config'
 import { STAP, useIntrede, useOpkomst } from '../lib/intrede'
 import { reeks, seizoen, volgendeMatch } from '../lib/matchen'
 import { berichten, nieuwsDatum } from '../lib/nieuws'
+import { useNu } from '../lib/nu'
 import { Countdown } from './Countdown'
 import { Kroon } from './Kroon'
 import { LetterKop } from './LetterKop'
@@ -21,7 +22,7 @@ const MotionLink = motion.create(Link)
  * Zonder takeover: de oorspronkelijke animaties, ongewijzigd.
  */
 export function Hero() {
-  const match = volgendeMatch()
+  const match = volgendeMatch(useNu().tijd)
   const laatsteNieuws = berichten[0]
   const t = SPONSOR_TAKEOVER
   const o = useOpkomst()
@@ -47,7 +48,14 @@ export function Hero() {
             data-hand="kruis"
             aria-hidden="true"
             className="-mt-5 font-display text-4xl text-red-600 [font-stretch:125%] sm:text-6xl"
-            {...(naRegen ? { initial: false, style: { opacity: kruis ? 1 : 0 } } : o(1, { opacity: 0, scale: 0.85 }))}
+            {...(naRegen
+              ? // zelfde beginstand als zonder regen (de voorgerenderde HTML is voor iedereen gelijk), dan in één keer zichtbaar
+                {
+                  initial: { opacity: 0, scale: 0.85 },
+                  animate: kruis ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.85 },
+                  transition: { duration: 0 },
+                }
+              : o(1, { opacity: 0, scale: 0.85 }))}
           >
             ×
           </motion.span>
@@ -77,9 +85,10 @@ export function Hero() {
               animate: { opacity: 1, scale: 1 },
               transition: { duration: 0.5, ease: 'easeOut' },
             })}
+        aria-label={t ? 'Tipswich Town' : undefined} // takeover: de letters zijn losse stukjes, de h1 draagt de naam
         className="mt-4 font-display text-6xl leading-none uppercase sm:text-8xl toutbien:text-[11.5vw] sm:toutbien:text-8xl"
       >
-        {t ? <LetterKop als="span" tekst="Tipswich" className="block" vertraging={2 * STAP} /> : 'Tipswich'}
+        {t ? <LetterKop als="span" tekst="Tipswich" naamOpOuder className="block" vertraging={2 * STAP} /> : 'Tipswich'}
         {!t && <br />}
         <PenseelTitel {...(t ? { vrij, vertraging: 3 * STAP } : {})}>Town</PenseelTitel>
       </motion.h1>

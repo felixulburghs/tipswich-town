@@ -1,17 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { animate, motion, useReducedMotion } from 'framer-motion'
 
-/** sessionStorage-sleutel: de regen speelt één keer per sessie. */
-export const REGEN_GEZIEN = 'toutbien-drop-gezien'
-
-/** Heeft deze bezoeker de regen deze sessie al gezien? (App beslist zo of de regen komt.) */
-export function regenAlGezien() {
-  try {
-    return sessionStorage.getItem(REGEN_GEZIEN) === '1'
-  } catch {
-    return false
-  }
-}
+import { REGEN_SLEUTEL } from '../config'
 
 const RAND = 140 // px: hoogte van de penseelrand onderaan het rode scherm
 const TEGEL = 600 // px: breedte van één stuk penseelrand (herhaalt zich over de breedte)
@@ -40,7 +30,19 @@ const klaarMet = (animatie: { then(klaar: () => void): unknown }) => new Promise
  * 5. vanaf 500 ms: de pagina eronder komt in een cascade binnen (intrede.ts)
  * Lagen van achter naar voor: rood scherm, kleine wazige blikjes, natuurkunde-blikjes, titel, reuzenblikjes.
  */
-export function BlikjesRegen({ vrij, kruisGeland }: { vrij: () => void; kruisGeland: () => void }) {
+export function BlikjesRegen({
+  actief,
+  vrij,
+  kruisGeland,
+  opgeruimd,
+}: {
+  /** false: geen regen (al gezien, of elders binnengekomen); de component ruimt zich meteen op */
+  actief: boolean
+  vrij: () => void
+  kruisGeland: () => void
+  /** de regen is helemaal voorbij */
+  opgeruimd: () => void
+}) {
   const [zichtbaar, setZichtbaar] = useState(true)
   const [weg, setWeg] = useState(0) // 0 = nog niet; anders de snelheid van de uitgang (1, of 2 bij overslaan)
   const minderBeweging = useReducedMotion() ?? false
@@ -156,8 +158,18 @@ export function BlikjesRegen({ vrij, kruisGeland }: { vrij: () => void; kruisGel
   }
 
   useEffect(() => {
+    if (!zichtbaar) opgeruimd()
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- enkel bij het verdwijnen
+  }, [zichtbaar])
+
+  useEffect(() => {
+    // Geen regen deze keer: de (door CSS al verborgen) overlay meteen weghalen
+    if (!actief) {
+      setZichtbaar(false)
+      return
+    }
     try {
-      sessionStorage.setItem(REGEN_GEZIEN, '1')
+      sessionStorage.setItem(REGEN_SLEUTEL, '1')
     } catch {
       // privévenster zonder opslag: dan zie je de regen gewoon opnieuw
     }
@@ -228,7 +240,8 @@ export function BlikjesRegen({ vrij, kruisGeland }: { vrij: () => void; kruisGel
       role="dialog"
       aria-modal="true"
       aria-label="Tipswich Town × Tout Bien"
-      className="fixed inset-0 z-[60] overflow-hidden"
+      // regen-scherm: verborgen tenzij <html data-regen="1"> (index.css), zodat de voorgerenderde HTML voor iedereen gelijk is
+      className="regen-scherm fixed inset-0 z-[60] overflow-hidden"
       // Een korte tik of klik slaat over; slepen blijft gooien/vegen met de blikjes
       onPointerDown={(e) => (tik.current = { x: e.clientX, y: e.clientY, t: performance.now() })}
       onPointerUp={(e) => {
@@ -265,11 +278,14 @@ export function BlikjesRegen({ vrij, kruisGeland }: { vrij: () => void; kruisGel
 
       {/* Titel tussen de natuurkunde-blikjes en de reuzenblikjes; boven de stapel (top 60% blijft vrij) */}
       <div className="pointer-events-none absolute inset-x-0 top-[34%] -translate-y-1/2 px-4">
+        {/* Geen <h1>: de homepagina heeft er één (TIPSWICH TOWN), en dit herhaalt enkel inhoud */}
         <motion.p
+          aria-hidden="true"
           className="text-center font-display text-[11vw] leading-[0.95] text-white uppercase [font-stretch:125%] sm:text-[min(8vw,7.5rem)]"
-          initial={minderBeweging ? false : { scale: 2.6, opacity: 0, rotate: -6 }}
+          // Zelfde beginstand voor iedereen (ook in de voorgerenderde HTML); bij minder beweging meteen op zijn plaats
+          initial={{ scale: 2.6, opacity: 0, rotate: -6 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
-          transition={{ type: 'spring', stiffness: 520, damping: 22, mass: 0.9 }}
+          transition={minderBeweging ? { duration: 0 } : { type: 'spring', stiffness: 520, damping: 22, mass: 0.9 }}
         >
           <span ref={titel} className="block">
             {/* Drie regels, zodat de × altijd alleen in het midden staat */}
