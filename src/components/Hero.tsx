@@ -2,13 +2,14 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { reeks, seizoen, volgendeMatch } from '../lib/matchen'
 import { berichten, nieuwsDatum } from '../lib/nieuws'
+import { useNu } from '../lib/nu'
 import { Countdown } from './Countdown'
 import { Kroon } from './Kroon'
 import { LogoKnop } from './LogoKnop'
 import { PenseelTitel } from './PenseelTitel'
 
 export function Hero() {
-  const match = volgendeMatch()
+  const match = volgendeMatch(useNu().tijd)
   const laatsteNieuws = berichten[0]
 
   return (

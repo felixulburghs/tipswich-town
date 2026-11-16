@@ -1,1 +1,3 @@
-/*  /index.html  200
+# Bestaande bestanden gaan altijd voor: voorgerenderde pagina's (kalender.html, ...), robots.txt en sitemap.xml.
+# Alleen adressen zonder bestand krijgen de lege app-schil, die de pagina in de browser opbouwt.
+/*  /spa.html  200

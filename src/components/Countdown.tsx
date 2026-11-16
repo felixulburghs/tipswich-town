@@ -1,18 +1,8 @@
-import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { Match } from '../types'
 import { aftrapVan, datumTekst } from '../lib/matchen'
+import { useNu } from '../lib/nu'
 import { ThuisUitIcoon } from './ThuisUitIcoon'
-
-/** Geeft elke seconde de huidige tijd terug, zodat de component opnieuw rendert. */
-function useNu() {
-  const [nu, setNu] = useState(() => new Date())
-  useEffect(() => {
-    const id = setInterval(() => setNu(new Date()), 1000)
-    return () => clearInterval(id)
-  }, [])
-  return nu
-}
 
 function splitsTijd(ms: number) {
   const s = Math.max(0, Math.floor(ms / 1000))
@@ -24,35 +14,40 @@ function splitsTijd(ms: number) {
   }
 }
 
-/** Eén vakje van de countdown; het getal schuift naar beneden weg als het verandert. */
-function Vakje({ waarde, label }: { waarde: number; label: string }) {
+/**
+ * Eén vakje van de countdown; het getal schuift naar beneden weg als het verandert.
+ * waarde null: nog geen echte tijd (voorgerenderde HTML), dan blijft het vakje leeg.
+ */
+function Vakje({ waarde, label }: { waarde: number | null; label: string }) {
   const tekst = String(waarde).padStart(2, '0')
   return (
     <div className="flex flex-col items-center rounded-lg bg-navy-950/70 px-2 py-3 ring-1 ring-royal-500/40">
       <div className="relative h-10 w-full overflow-hidden sm:h-14">
-        <AnimatePresence initial={false}>
-          <motion.span
-            key={tekst}
-            initial={{ y: '-100%', opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: '100%', opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="absolute inset-0 text-center font-display text-4xl tabular-nums sm:text-5xl"
-          >
-            {tekst}
-          </motion.span>
-        </AnimatePresence>
+        {waarde !== null && (
+          <AnimatePresence initial={false}>
+            <motion.span
+              key={tekst}
+              initial={{ y: '-100%', opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: '100%', opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="absolute inset-0 text-center font-display text-4xl tabular-nums sm:text-5xl"
+            >
+              {tekst}
+            </motion.span>
+          </AnimatePresence>
+        )}
       </div>
-      <span className="mt-1 text-xs text-white/60">
-        {label}
-      </span>
+      <span className="mt-1 text-xs text-white/60">{label}</span>
     </div>
   )
 }
 
 export function Countdown({ match }: { match: Match }) {
-  const nu = useNu()
-  const { dagen, uren, min, sec } = splitsTijd(aftrapVan(match)!.getTime() - nu.getTime()) // volgendeMatch() heeft altijd een datum
+  // De cijfers pas tonen met de echte tijd: in de voorgerenderde HTML zou anders de tijd van de build staan
+  const { tijd, echt } = useNu(true)
+  const t = splitsTijd(aftrapVan(match)!.getTime() - tijd.getTime()) // volgendeMatch() heeft altijd een datum
+  const { dagen, uren, min, sec } = echt ? t : { dagen: null, uren: null, min: null, sec: null }
 
   return (
     <motion.section
@@ -75,9 +70,7 @@ export function Countdown({ match }: { match: Match }) {
         </h2>
       </div>
 
-      <p className="mt-3 font-display text-3xl leading-none text-balance uppercase sm:text-4xl">
-        {match.tegenstander}
-      </p>
+      <p className="mt-3 font-display text-3xl leading-none text-balance uppercase sm:text-4xl">{match.tegenstander}</p>
 
       <p className="mt-2 text-sm text-white/80">{datumTekst(match)}</p>
       <p className="text-sm text-white/60">{match.locatie}</p>

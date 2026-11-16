@@ -29,13 +29,13 @@ export function SpelerKaart({ speler }: { speler: Speler }) {
           className="relative block h-full w-full rounded-2xl transition-shadow hover:shadow-2xl hover:shadow-royal-500/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
         >
           <KaartVoorkant speler={speler} />
-          {!minderBeweging && (
-            <motion.span
-              aria-hidden="true"
-              style={{ backgroundImage: glans }}
-              className="pointer-events-none absolute inset-0 rounded-2xl mix-blend-color-dodge"
-            />
-          )}
+          {/* Minder beweging: verborgen via CSS (motion-reduce), niet weggelaten: de voorgerenderde HTML
+              weet niet wie minder beweging wil, en moet gelijk zijn aan wat React in de browser rendert */}
+          <motion.span
+            aria-hidden="true"
+            style={{ backgroundImage: glans }}
+            className="pointer-events-none absolute inset-0 rounded-2xl mix-blend-color-dodge motion-reduce:hidden"
+          />
         </Link>
       </motion.div>
     </motion.div>

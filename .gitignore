@@ -1,6 +1,7 @@
 # Dependencies en build-output
 node_modules
 dist
+dist-server
 *.local
 
 # Geheimen / omgevingsvariabelen (nooit committen)

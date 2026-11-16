@@ -16,6 +16,12 @@ Instagram: @tipswich_town. Slogans: "Just the tip", "UP THE TIPS!", "Zaalvoetbal
 - Foto's in `public/spelers/<achternaam>.jpg`, logo in `public/logo.webp` (transparant), favicon in `public/favicon.png`, iPhone-icoon in `public/apple-touch-icon.png`
 - Hosting: Vercel of Netlify, gekoppeld aan GitHub
 
+## SEO en voorrenderen
+- `npm run build` rendert elke pagina voor naar echte HTML (`scripts/prerender.mjs` + `src/entry-server.tsx`); de browser neemt die over met `hydrateRoot`. Geen Next.js.
+- Titel, beschrijving, canonieke URL, Open Graph/Twitter en JSON-LD per pagina komen uit `src/lib/seo.ts`; daar staat ook de lijst pagina's voor `sitemap.xml`. Nieuwe spelers of berichten komen er vanzelf in.
+- Render nooit iets dat van de tijd, `window` of "minder beweging" afhangt: dan wijkt de browser af van de voorgerenderde HTML. Tijd: `useNu()` uit `src/lib/nu.ts`.
+- De `google-site-verification`-tag in `index.html` moet altijd in elke pagina blijven staan.
+
 ## Huisstijl (uit Instagram)
 | Token        | Hex       | Gebruik                                   |
 |--------------|-----------|-------------------------------------------|

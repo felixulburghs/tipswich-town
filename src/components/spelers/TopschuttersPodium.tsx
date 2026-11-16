@@ -14,8 +14,15 @@ function Teller({ waarde }: { waarde: number }) {
   const minderBeweging = useReducedMotion()
 
   useEffect(() => {
-    if (!inBeeld || minderBeweging || !ref.current) return
+    if (!ref.current) return
     const el = ref.current
+    // Minder beweging: meteen het juiste getal. (Niet al in de render, want de voorgerenderde HTML
+    // weet niet wie minder beweging wil: dan zou React de HTML niet kunnen overnemen.)
+    if (minderBeweging) {
+      el.textContent = String(waarde)
+      return
+    }
+    if (!inBeeld) return
     const telling = animate(0, waarde, {
       duration: 1.2,
       ease: 'easeOut',
@@ -24,7 +31,7 @@ function Teller({ waarde }: { waarde: number }) {
     return () => telling.stop()
   }, [inBeeld, minderBeweging, waarde])
 
-  return <span ref={ref}>{minderBeweging ? waarde : 0}</span>
+  return <span ref={ref}>0</span>
 }
 
 // Podiumvolgorde: 2e links, 1e in het midden, 3e rechts
@@ -59,7 +66,9 @@ export function TopschuttersPodium() {
               </span>
               <span className="text-xs text-white/60">#{s.speler.nummer}</span>
             </Link>
-            <div className={`mt-2 flex w-full flex-col items-center justify-start rounded-t-lg pt-2 ${hoogte} ${kleur}`}>
+            <div
+              className={`mt-2 flex w-full flex-col items-center justify-start rounded-t-lg pt-2 ${hoogte} ${kleur}`}
+            >
               <span className="font-display text-3xl leading-none sm:text-4xl">
                 <Teller waarde={s.goals} />
               </span>
