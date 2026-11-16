@@ -17,13 +17,7 @@ export function Hero() {
       <div
         aria-hidden="true"
         className="absolute inset-0 -z-10 bg-navy-950"
-        style={{
-          backgroundImage: `
-            radial-gradient(ellipse 60% 45% at 50% 0%, rgb(8 72 184 / 0.55), transparent 70%),
-            radial-gradient(ellipse 30% 60% at 15% 0%, rgb(8 40 136 / 0.5), transparent 70%),
-            radial-gradient(ellipse 30% 60% at 85% 0%, rgb(8 40 136 / 0.5), transparent 70%),
-            linear-gradient(to bottom, transparent 60%, #080838)`,
-        }}
+        style={{ backgroundImage: 'var(--licht-zaal)' }}
       />
 
       <LogoKnop />

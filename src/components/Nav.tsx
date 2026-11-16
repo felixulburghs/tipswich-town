@@ -20,7 +20,7 @@ export function Nav() {
         <InstagramKnop />
       ) : (
         <NavLink to="/" aria-label="Tipswich Town, naar home">
-          <img src="/logo.webp" alt="" width={321} height={400} className="h-14 w-auto drop-shadow-[0_4px_12px_rgb(8_72_184/0.6)] sm:h-16" />
+          <img src="/logo.webp" alt="" width={321} height={400} style={{ filter: 'var(--gloed-nav-logo)' }} className="h-14 w-auto sm:h-16" />
         </NavLink>
       )}
       <ul className="flex gap-3 font-display text-base tracking-wide uppercase sm:gap-5 sm:text-lg">

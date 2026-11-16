@@ -82,7 +82,8 @@ function LogoKnopInhoud() {
           alt=""
           width={321}
           height={400}
-          className="h-32 w-auto drop-shadow-[0_8px_28px_rgb(8_72_184/0.7)] sm:h-40"
+          style={{ filter: 'var(--gloed-logo)' }}
+          className="h-32 w-auto sm:h-40"
         />
 
         {/* Lichtstreep over het schild. Het logo dient als masker (mask-image),

@@ -39,7 +39,7 @@ export function NieuwsBericht() {
   return (
     <main
       className="min-h-svh bg-navy-950 px-4 pt-24 pb-16 sm:pt-28"
-      style={{ backgroundImage: 'radial-gradient(ellipse 70% 30% at 50% 0%, rgb(8 72 184 / 0.45), transparent 70%)' }}
+      style={{ backgroundImage: 'var(--licht-pagina)' }}
     >
       <article className="mx-auto max-w-2xl">
         <TerugLink />
