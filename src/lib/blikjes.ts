@@ -30,13 +30,13 @@ const klem = (v: number, min: number, max: number) => Math.min(max, Math.max(min
 export const blikBreedte = (schermBreedte: number) => klem(schermBreedte * 0.09, 56, 104)
 
 /**
- * Zoveel blikjes dat de stapel hooguit de onderste 40% van het scherm bedekt.
+ * Zoveel blikjes dat de stapel hooguit de onderste `grens` (40%) van het scherm bedekt.
  * DEKKING = welk deel van die 40% echt met blik gevuld raakt (de rest is lucht tussen schuine blikjes);
  * afgesteld door de stapelhoogte te meten (canvas.dataset.stapel).
  */
 const DEKKING = 0.42
-export function aantalVoorStapel(B: number, H: number, breedte: number, verhouding: number) {
-  return klem(Math.round((0.4 * B * H * DEKKING) / (breedte * breedte * verhouding)), 6, 40)
+export function aantalVoorStapel(B: number, H: number, breedte: number, verhouding: number, grens = 0.4) {
+  return klem(Math.round((grens * B * H * DEKKING) / (breedte * breedte * verhouding)), 6, 40)
 }
 
 /** Hoe breed de voorbereide afbeelding wordt (echte pixels): nooit groter dan het bestand zelf. */
@@ -118,7 +118,12 @@ export type BlikjesOpties = {
   achterCanvas?: HTMLCanvasElement
   voorCanvas?: HTMLCanvasElement
   rougeKans: number // 0.25 ≈ 3 Pils per Rouge; 0 = enkel Pils
-  aantal?: number // standaard: zoveel dat de stapel ≤ 40% van het scherm bedekt
+  aantal?: number // standaard: zoveel dat de stapel ≤ stapelGrens van het scherm bedekt
+  stapelGrens?: number // 0.4 = de stapel blijft in de onderste 40%
+  vulGaten?: boolean // extra blikjes gooien tot er geen gaten meer op de vloer zijn
+  breedte?: number // standaard 9% van de breedte, tussen 56 en 104 px
+  obstakels?: HTMLElement[] // bv. de knop: blikjes botsen ertegen en stapelen errond
+  bui?: { vloerWegNa?: number } // korte bui: alles meteen in twee golven; vloer weg na x ms (of nooit)
   sceneTijd?: number // ms sinds de titel verscheen; de blikjes beginnen op 0,5 s
   interactief: boolean // muis duwen/gooien, gsm vegen en kantelen
   stil?: boolean // "minder beweging": stapel in stilte berekenen, één beeld tekenen
@@ -130,7 +135,7 @@ export async function startBlikjes(o: BlikjesOpties) {
   const B = o.canvas.clientWidth
   const H = o.canvas.clientHeight
   const dpr = Math.min(window.devicePixelRatio || 1, 3)
-  const breedte = blikBreedte(B)
+  const breedte = o.breedte ?? blikBreedte(B)
 
   const [pilsImg, rougeImg] = await Promise.all([laad(BEELDEN.pils), o.rougeKans > 0 ? laad(BEELDEN.rouge) : null])
   const img = { pils: pilsImg, rouge: rougeImg ?? pilsImg }
@@ -163,11 +168,23 @@ export async function startBlikjes(o: BlikjesOpties) {
     Bodies.rectangle(B + dik / 2, 0, dik, H * 6, { isStatic: true, friction: 0.3 }),
   ]
   Composite.add(wereld, [vloer, ...muren])
+  // Obstakels (de knop): een vast, onzichtbaar blok op dezelfde plek; de knop zelf blijft erboven getekend
+  const c = o.canvas.getBoundingClientRect()
+  const obstakels = (o.obstakels ?? []).map((el) => {
+    const r = el.getBoundingClientRect()
+    return Bodies.rectangle(r.left - c.left + r.width / 2, r.top - c.top + r.height / 2, r.width, r.height, {
+      isStatic: true,
+      friction: 0.6,
+      chamfer: { radius: 8 },
+    })
+  })
+  Composite.add(wereld, obstakels)
 
   type Blik = { body: MBody; soort: Soort; b: number; h: number; contact: number }
   const blikjes: Blik[] = []
+  const grens = o.stapelGrens ?? 0.4
   const aantal =
-    o.aantal ?? aantalVoorStapel(B, H, breedte, (midSprite.pils.verhouding * 3 + midSprite.rouge.verhouding) / 4)
+    o.aantal ?? aantalVoorStapel(B, H, breedte, (midSprite.pils.verhouding * 3 + midSprite.rouge.verhouding) / 4, grens)
 
   function voegToe(x: number, y: number, vy: number) {
     const soort = kiesSoort()
@@ -324,18 +341,59 @@ export async function startBlikjes(o: BlikjesOpties) {
 
   // --- Draaiboek (ms na het verschijnen van de titel) ---
   let scene = o.sceneTijd ?? 0
-  const begin = Math.max(500, scene) // de eerste drie blikjes; later als de beelden traag binnenkwamen
+  // de eerste drie blikjes op 0,5 s (later als de beelden traag binnenkwamen); een korte bui begint meteen
+  const begin = o.bui ? scene : Math.max(500, scene)
   const gepland: { t: number; doe: () => void; golf?: boolean }[] = []
   const plan = (t: number, doe: () => void, golf = false) => gepland.push({ t: begin + t, doe, golf })
 
+  /** Stukken vloer waar geen blikje (of obstakel) boven ligt, breder dan 24 px. */
+  function vloerGaten(enkelOpVloer: boolean) {
+    const bedekt = obstakels.map((k: MBody) => [k.bounds.min.x, k.bounds.max.x])
+    for (const { body } of blikjes) {
+      if (enkelOpVloer && body.bounds.max.y < vloerY - breedte * 0.7) continue
+      bedekt.push([body.bounds.min.x + 6, body.bounds.max.x - 6])
+    }
+    bedekt.sort((p: number[], q: number[]) => p[0] - q[0])
+    const gaten: [number, number][] = []
+    let x = 0
+    for (const [van, tot] of bedekt) {
+      if (van - x > 24) gaten.push([x, van])
+      x = Math.max(x, tot)
+    }
+    if (B - x > 24) gaten.push([x, B])
+    return gaten
+  }
+  let extra = 0
+  function vulVloer(enkelOpVloer: boolean) {
+    for (const [van, tot] of vloerGaten(enkelOpVloer)) {
+      const n = Math.max(1, Math.round((tot - van) / (breedte * 1.2)))
+      for (let i = 0; i < n && extra < 14; i++, extra++)
+        voegToe(van + ((tot - van) * (i + 0.5)) / n, -breedte * willekeurig(1.2, 1.8), 1.5)
+    }
+  }
+
+  if (o.bui) {
+    // Korte bui: twee snelle golven, daarna blijven liggen of (na vloerWegNa) wegvallen
+    const helft = Math.ceil(aantal / 2)
+    for (let i = 0; i < aantal; i++) {
+      const golf = i < helft ? 0 : 1
+      const inGolf = golf ? aantal - helft : helft
+      const plek = golf ? i - helft : i
+      plan(golf * 220 + willekeurig(0, 80), () =>
+        voegToe((B / inGolf) * (plek + willekeurig(0.2, 0.8)), -breedte * willekeurig(1.2, 2.2), 0.4),
+      )
+    }
+    if (o.bui.vloerWegNa != null) plan(o.bui.vloerWegNa, () => laatVallen())
+  }
+
   // 1. drie blikjes na elkaar, verspreid over de breedte
-  const openers = Math.min(3, aantal)
+  const openers = o.bui ? 0 : Math.min(3, aantal)
   for (let i = 0; i < openers; i++)
     plan(i * 150, () => voegToe(B * (0.25 + i * 0.25) + willekeurig(-20, 20), -breedte * 2, 0.5))
   // 2. de stortbui van 0,9 tot 1,2 s: golven over de hele breedte, elke golf netjes gespreid (vakjes + toeval).
   //    Snel genoeg ingeworpen dat alles rond 1,8 s geland is en op 2,2 s stil ligt.
   const golven = 4
-  const rest = aantal - openers
+  const rest = o.bui ? 0 : aantal - openers
   for (let g = 0; g < golven; g++) {
     const inGolf = Math.round(rest / golven + (g < rest % golven ? 0.5 : 0))
     for (let i = 0; i < inGolf; i++) {
@@ -392,17 +450,25 @@ export async function startBlikjes(o: BlikjesOpties) {
       })
     }
   }
-  // Meting op 2,2 s (controle van de 40%-regel): hoe hoog ligt de stapel, en hoeveel blikjes bewegen nog?
-  plan(1700, () => {
-    // in rust = slapend, of traag én tegen iets aan (bovenaan een stuiter is een blikje ook even traag, maar zweeft)
-    const rust = blikjes.filter(
-      (k) => k.body.isSleeping || (k.body.speed < 1.5 && stapNr - (k.body.plugin.contact ?? -99) < 3),
-    )
-    o.canvas.dataset.stapel = ((vloerY - Math.min(...rust.map((k) => k.body.bounds.min.y))) / H).toFixed(2)
-    o.canvas.dataset.inBeweging = String(blikjes.length - rust.length)
-  })
+  // Brede schermen: na de stortbui de gaten op de vloer opvullen (eerst op basis van waar ze vallen, dan nog eens)
+  if (o.vulGaten && !o.bui) {
+    plan(800, () => vulVloer(false))
+    plan(1100, () => vulVloer(true))
+  }
+  // Meting op 2,2 s (controle van de stapelgrens): hoe hoog ligt de stapel, bewegen er nog, zijn er nog gaten?
+  if (!o.bui)
+    plan(1700, () => {
+      // in rust = slapend, of traag én tegen iets aan (bovenaan een stuiter is een blikje ook even traag, maar zweeft)
+      const rust = blikjes.filter(
+        (k) => k.body.isSleeping || (k.body.speed < 1.5 && stapNr - (k.body.plugin.contact ?? -99) < 3),
+      )
+      o.canvas.dataset.stapel = ((vloerY - Math.min(...rust.map((k) => k.body.bounds.min.y))) / H).toFixed(2)
+      o.canvas.dataset.inBeweging = String(blikjes.length - rust.length)
+      o.canvas.dataset.gaten = String(vloerGaten(true).length)
+      o.canvas.dataset.aantal = String(blikjes.length)
+    })
   // 3,0 s: vloer weg
-  plan(2500, () => o.bij?.vloerWeg?.())
+  if (!o.bui) plan(2500, () => o.bij?.vloerWeg?.())
   gepland.sort((a, b) => a.t - b.t)
 
   // --- Interactie (midden-laag) ---
@@ -520,18 +586,20 @@ export async function startBlikjes(o: BlikjesOpties) {
   document.addEventListener('visibilitychange', opZichtbaar)
   opruimen.push(() => document.removeEventListener('visibilitychange', opZichtbaar))
 
+  /** De vloer (en de knop) valt weg: alle blikjes vallen uit beeld. */
+  function laatVallen() {
+    if (vallen) return
+    vallen = true
+    gepland.length = 0
+    Composite.remove(wereld, [vloer, ...obstakels])
+    if (muisBeperking) Composite.remove(wereld, muisBeperking)
+    engine.gravity.x = 0
+    engine.gravity.y = 2.6
+    wekAlles()
+  }
+
   return {
-    /** De vloer valt weg: alle blikjes vallen uit beeld. */
-    laatVallen() {
-      if (vallen) return
-      vallen = true
-      gepland.length = 0
-      Composite.remove(wereld, vloer)
-      if (muisBeperking) Composite.remove(wereld, muisBeperking)
-      engine.gravity.x = 0
-      engine.gravity.y = 2.6
-      wekAlles()
-    },
+    laatVallen,
     stop() {
       cancelAnimationFrame(raf)
       opruimen.forEach((f) => f())

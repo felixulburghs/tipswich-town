@@ -37,6 +37,7 @@ export function BlikjesRegen() {
   const achter = useRef<HTMLCanvasElement>(null)
   const midden = useRef<HTMLCanvasElement>(null)
   const voor = useRef<HTMLCanvasElement>(null)
+  const knop = useRef<HTMLButtonElement>(null)
   const regen = useRef<{ laatVallen(): void; stop(): void } | null>(null)
   const gevallen = useRef(false) // ref i.p.v. state: de timers zien zo altijd de actuele waarde
   const begon = useRef(performance.now())
@@ -64,11 +65,17 @@ export function BlikjesRegen() {
 
     import('../lib/blikjes').then(async ({ startBlikjes }) => {
       if (gestopt || !midden.current) return
+      const breed = window.innerWidth > 1024
       const r = await startBlikjes({
         canvas: midden.current,
         achterCanvas: achter.current ?? undefined,
         voorCanvas: voor.current ?? undefined,
         rougeKans: 0.25,
+        // Brede schermen: stapel tot 50% en geen gaten op de vloer; gsm: 40%
+        stapelGrens: breed ? 0.5 : 0.4,
+        vulGaten: breed,
+        // De knop is een vast blok: blikjes botsen ertegen en stapelen errond, hij blijft zichtbaar en tikbaar
+        obstakels: knop.current ? [knop.current] : [],
         sceneTijd: performance.now() - begon.current,
         interactief: true,
         stil: minderBeweging,
@@ -172,6 +179,7 @@ export function BlikjesRegen() {
 
       {!valt && (
         <button
+          ref={knop}
           type="button"
           onClick={naarDeSite}
           className="absolute bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 rounded-lg bg-white px-5 py-3 font-display text-lg whitespace-nowrap text-red-600 uppercase transition hover:bg-white/90 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
