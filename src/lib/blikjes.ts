@@ -2,133 +2,418 @@ import Matter from 'matter-js'
 import { vraagGyroscoopToestemming } from '../hooks/useKantel'
 
 /**
- * Vallende blikjes met echte natuurkunde (matter-js), getekend op één <canvas>.
- * Gebruikt door de blikjesregen bij het openen van de site, en later door de footer.
- * Dit bestand (en matter-js) wordt pas geladen met import() als het nodig is,
- * zodat het de eerste weergave van de site nooit vertraagt.
+ * Vallende blikjes met echte natuurkunde (matter-js). Pas geladen met import() wanneer nodig,
+ * zodat de eerste weergave van de site er nooit op wacht.
+ *
+ * Drie lagen, elk op een eigen <canvas>:
+ * - achter: kleine blikjes die traag vallen, zonder botsingen (de CSS maakt ze wazig en donker)
+ * - midden: de echte natuurkunde-blikjes, scherp, met schaduw, contactschaduw en druppels
+ * - voor:   2–3 reuzenblikjes die in de eerste seconde voorbij flitsen (de CSS maakt ze heel wazig)
+ * De titel staat in de HTML tussen midden en voor, zodat de stapel hem nooit bedekt.
  */
 
-const { Engine, Bodies, Body, Composite, Mouse, MouseConstraint } = Matter
+const { Engine, Bodies, Body, Composite, Events, Mouse, MouseConstraint, Sleeping } = Matter
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MBody = any
 
 const BEELDEN = { pils: '/sponsors/can-pils.png', rouge: '/sponsors/can-rouge.png' }
 type Soort = keyof typeof BEELDEN
 
-export type BlikjesOpties = {
-  canvas: HTMLCanvasElement
-  aantal: number
-  breedte: number // breedte van een blikje op het scherm, in CSS-pixels
-  rougeKans: number // 0.25 = ongeveer 3 Pils per Rouge; 0 = enkel Pils
-  regenDuurMs: number // over hoeveel tijd de blikjes binnenvallen
-  interactief: boolean // muis duwen/gooien, gsm vegen en kantelen
-  stil?: boolean // "minder beweging": bereken de stapel in stilte en teken één beeld
-}
+const GROOTTE = 0.12 // elk blikje ±12%
+const VLOER_MARGE = 6 // px tussen vloer en onderkant scherm, zodat de contactschaduw zichtbaar is
+const CREME = '255 249 242'
 
-const GROOTTE_MIN = 0.88
-const GROOTTE_MAX = 1.12
 const willekeurig = (min: number, max: number) => min + Math.random() * (max - min)
+const klem = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
+
+/** Breedte van een blikje: 9% van het scherm, tussen 56 en 104 px. */
+export const blikBreedte = (schermBreedte: number) => klem(schermBreedte * 0.09, 56, 104)
 
 /**
- * Hoe breed de voorbereide (gecachte) afbeelding wordt, in echte pixels:
- * groot genoeg voor het grootste blikje op dit scherm, maar nooit groter dan het bestand zelf.
+ * Zoveel blikjes dat de stapel hooguit de onderste 40% van het scherm bedekt.
+ * DEKKING = welk deel van die 40% echt met blik gevuld raakt (de rest is lucht tussen schuine blikjes);
+ * afgesteld door de stapelhoogte te meten (canvas.dataset.stapel).
  */
+const DEKKING = 0.42
+export function aantalVoorStapel(B: number, H: number, breedte: number, verhouding: number) {
+  return klem(Math.round((0.4 * B * H * DEKKING) / (breedte * breedte * verhouding)), 6, 40)
+}
+
+/** Hoe breed de voorbereide afbeelding wordt (echte pixels): nooit groter dan het bestand zelf. */
 export function cacheBreedte(cssBreedte: number, dpr: number, bestandBreedte: number) {
-  return Math.min(Math.round(cssBreedte * GROOTTE_MAX * dpr), bestandBreedte)
+  return Math.min(Math.round(cssBreedte * (1 + GROOTTE) * dpr), bestandBreedte)
 }
 console.assert(cacheBreedte(120, 2, 268) === 268 && cacheBreedte(90, 1, 445) === 101, 'cacheBreedte')
+console.assert(blikBreedte(375) === 56 && blikBreedte(1440) === 104 && blikBreedte(800) === 72, 'blikBreedte')
 
-/** Laadt een blikje één keer en schaalt het één keer naar schermformaat (nooit elk frame opnieuw). */
-async function voorbereid(src: string, cssBreedte: number, dpr: number) {
+async function laad(src: string) {
   const img = new Image()
   img.src = src
   await img.decode()
-  const b = cacheBreedte(cssBreedte, dpr, img.naturalWidth)
-  const h = Math.round((b * img.naturalHeight) / img.naturalWidth)
-  const cache = document.createElement('canvas')
-  cache.width = b
-  cache.height = h
-  const ctx = cache.getContext('2d')!
-  ctx.imageSmoothingQuality = 'high'
-  ctx.drawImage(img, 0, 0, b, h)
-  return { cache, verhouding: h / b }
+  return img
 }
 
-export async function startBlikjes(o: BlikjesOpties) {
-  const { canvas } = o
-  const dpr = Math.min(window.devicePixelRatio || 1, 2)
-  const B = canvas.clientWidth
-  const H = canvas.clientHeight
+type Sprite = { beeld: HTMLCanvasElement; schaduw?: HTMLCanvasElement; pad: number; verhouding: number; max: number }
+
+/**
+ * Schaalt een blikje één keer naar schermformaat (nooit elk frame vanuit het grote bestand),
+ * en bakt er desgewenst een zachte schaduw bij: een wazig, donker silhouet als apart beeldje.
+ * Apart, zodat de schaduw altijd naar rechtsonder valt, ook als het blikje ondersteboven ligt.
+ */
+function maakSprite(img: HTMLImageElement, cssBreedte: number, dpr: number, metSchaduw: boolean): Sprite {
+  const b = cacheBreedte(cssBreedte, dpr, img.naturalWidth)
+  const h = Math.round((b * img.naturalHeight) / img.naturalWidth)
+  const beeld = document.createElement('canvas')
+  beeld.width = b
+  beeld.height = h
+  const ctx = beeld.getContext('2d')!
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(img, 0, 0, b, h)
+
+  const sprite: Sprite = { beeld, pad: 0, verhouding: h / b, max: img.naturalWidth }
+  if (!metSchaduw) return sprite
+
+  // Schaduwtruc: teken het blikje ver buiten beeld, met een schaduw-offset die hem terug in beeld zet
+  const vervaging = Math.round(b * 0.1)
+  const pad = vervaging * 2
+  const s = document.createElement('canvas')
+  s.width = b + pad * 2
+  s.height = h + pad * 2
+  const sc = s.getContext('2d')!
+  const ver = s.width + 1000
+  sc.shadowColor = 'rgb(45 0 6 / 0.75)'
+  sc.shadowBlur = vervaging
+  sc.shadowOffsetX = ver
+  sc.drawImage(beeld, pad - ver, pad)
+  sprite.schaduw = s
+  sprite.pad = pad / dpr
+  return sprite
+}
+
+type Laag = { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; dpr: number }
+function maakLaag(canvas: HTMLCanvasElement, dpr: number, B: number, H: number): Laag {
   canvas.width = Math.round(B * dpr)
   canvas.height = Math.round(H * dpr)
   const ctx = canvas.getContext('2d')!
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  return { canvas, ctx, dpr }
+}
 
-  const [pils, rouge] = await Promise.all([
-    voorbereid(BEELDEN.pils, o.breedte, dpr),
-    o.rougeKans > 0 ? voorbereid(BEELDEN.rouge, o.breedte, dpr) : null,
-  ])
-  const beeld = { pils, rouge: rouge ?? pils }
+/** Een blikje zonder natuurkunde (achter- en voorlaag): rechte val met draai. */
+type Zweef = {
+  soort: Soort
+  x: number
+  y: number
+  vx: number
+  vy: number
+  hoek: number
+  draai: number
+  b: number
+  h: number
+}
+type Druppel = { x: number; y: number; vx: number; vy: number; r: number; leven: number }
 
-  const engine = Engine.create({ enableSleeping: false })
+export type BlikjesOpties = {
+  canvas: HTMLCanvasElement // midden: de natuurkunde-blikjes
+  achterCanvas?: HTMLCanvasElement
+  voorCanvas?: HTMLCanvasElement
+  rougeKans: number // 0.25 ≈ 3 Pils per Rouge; 0 = enkel Pils
+  aantal?: number // standaard: zoveel dat de stapel ≤ 40% van het scherm bedekt
+  sceneTijd?: number // ms sinds de titel verscheen; de blikjes beginnen op 0,5 s
+  interactief: boolean // muis duwen/gooien, gsm vegen en kantelen
+  stil?: boolean // "minder beweging": stapel in stilte berekenen, één beeld tekenen
+  schudElement?: HTMLElement // schudt even bij de eerste harde landingen
+  bij?: { eersteLanding?(): void; vloerWeg?(): void }
+}
+
+export async function startBlikjes(o: BlikjesOpties) {
+  const B = o.canvas.clientWidth
+  const H = o.canvas.clientHeight
+  const dpr = Math.min(window.devicePixelRatio || 1, 3)
+  const breedte = blikBreedte(B)
+
+  const [pilsImg, rougeImg] = await Promise.all([laad(BEELDEN.pils), o.rougeKans > 0 ? laad(BEELDEN.rouge) : null])
+  const img = { pils: pilsImg, rouge: rougeImg ?? pilsImg }
+  const sprites = (css: number, d: number, schaduw: boolean) => ({
+    pils: maakSprite(img.pils, css, d, schaduw),
+    rouge: maakSprite(img.rouge, css, d, schaduw),
+  })
+  const midSprite = sprites(breedte, dpr, true)
+  // Achter en voor zijn wazig: 1× resolutie volstaat en scheelt veel rekenwerk op gsm
+  const achterSprite = o.achterCanvas ? sprites(breedte * 0.5, 1, false) : null
+  const voorSprite = o.voorCanvas ? sprites(breedte * 2.5, 1, false) : null
+
+  const midden = maakLaag(o.canvas, dpr, B, H)
+  const achter = o.achterCanvas ? maakLaag(o.achterCanvas, 1, B, H) : null
+  const voor = o.voorCanvas ? maakLaag(o.voorCanvas, 1, B, H) : null
+
+  const kiesSoort = (): Soort => (Math.random() < o.rougeKans ? 'rouge' : 'pils')
+  /** Breedte met ±12% variatie, maar nooit breder dan het bestand. */
+  const maat = (basis: number, s: Sprite) => Math.min(basis * willekeurig(1 - GROOTTE, 1 + GROOTTE), s.max)
+
+  // --- Natuurkunde ---
+  const engine = Engine.create({ enableSleeping: true })
+  engine.gravity.y = 1.6
   const wereld = engine.world
-
-  // Vloer en zijmuren net buiten beeld; de muren zijn hoog zodat opgegooide blikjes niet ontsnappen
+  const vloerY = H - VLOER_MARGE
   const dik = 200
-  const vloer = Bodies.rectangle(B / 2, H + dik / 2, B * 3, dik, { isStatic: true })
+  const vloer = Bodies.rectangle(B / 2, vloerY + dik / 2, B * 3, dik, { isStatic: true, friction: 0.9 })
   const muren = [
-    Bodies.rectangle(-dik / 2, 0, dik, H * 6, { isStatic: true }),
-    Bodies.rectangle(B + dik / 2, 0, dik, H * 6, { isStatic: true }),
+    Bodies.rectangle(-dik / 2, 0, dik, H * 6, { isStatic: true, friction: 0.3 }),
+    Bodies.rectangle(B + dik / 2, 0, dik, H * 6, { isStatic: true, friction: 0.3 }),
   ]
   Composite.add(wereld, [vloer, ...muren])
 
-  type Blik = { body: any; soort: Soort; b: number; h: number } // eslint-disable-line @typescript-eslint/no-explicit-any
+  type Blik = { body: MBody; soort: Soort; b: number; h: number; contact: number }
   const blikjes: Blik[] = []
+  const aantal =
+    o.aantal ?? aantalVoorStapel(B, H, breedte, (midSprite.pils.verhouding * 3 + midSprite.rouge.verhouding) / 4)
 
-  function voegToe(y: number) {
-    const soort: Soort = Math.random() < o.rougeKans ? 'rouge' : 'pils'
-    const b = o.breedte * willekeurig(GROOTTE_MIN, GROOTTE_MAX)
-    const h = b * beeld[soort].verhouding
-    const body = Bodies.rectangle(willekeurig(b / 2, B - b / 2), y, b * 0.92, h * 0.97, {
-      chamfer: { radius: b * 0.2 },
+  function voegToe(x: number, y: number, vy: number) {
+    const soort = kiesSoort()
+    const b = maat(breedte, midSprite[soort])
+    const h = b * midSprite[soort].verhouding
+    const body = Bodies.rectangle(klem(x, b / 2, B - b / 2), y, b * 0.94, h * 0.97, {
+      chamfer: { radius: b * 0.35 }, // ronde hoeken: een blikje rechtop op een ander blikje kantelt om
       angle: willekeurig(-Math.PI, Math.PI),
-      restitution: 0.35,
-      friction: 0.25,
-      frictionAir: 0.008,
-      density: 0.0015,
+      restitution: willekeurig(0.15, 0.25),
+      friction: 0.6,
+      frictionStatic: 0.9,
+      frictionAir: 0.003, // weinig luchtweerstand: ze vallen zwaar
+      density: 0.002,
+      sleepThreshold: 30,
     })
-    Body.setAngularVelocity(body, willekeurig(-0.2, 0.2))
+    body.plugin.blik = true
+    Body.setVelocity(body, { x: willekeurig(-1, 1), y: vy * (1000 / 60) }) // matter rekent in px per stap
+    Body.setAngularVelocity(body, willekeurig(-0.18, 0.18))
     Composite.add(wereld, body)
-    blikjes.push({ body, soort, b, h })
+    blikjes.push({ body, soort, b, h, contact: 0 })
   }
 
-  function teken() {
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  let vallen = false // na laatVallen(): niets meer afremmen
+  // Demping: in de lucht blijven ze tollen, bij contact komen ze snel tot rust (en slapen dan)
+  let stapNr = 0
+  Events.on(engine, 'collisionActive', (e: { pairs: { bodyA: MBody; bodyB: MBody }[] }) => {
+    for (const p of e.pairs) {
+      p.bodyA.plugin.contact = stapNr
+      p.bodyB.plugin.contact = stapNr
+    }
+  })
+  Events.on(engine, 'beforeUpdate', () => {
+    stapNr++
+    for (const { body } of blikjes) {
+      if (body.isSleeping) continue
+      const opGrond = stapNr - (body.plugin.contact ?? -99) < 3
+      Body.setAngularVelocity(body, body.angularVelocity * (opGrond ? 0.86 : 0.995))
+      if (opGrond && !vallen) Body.setVelocity(body, { x: body.velocity.x * 0.94, y: body.velocity.y }) // niet eindeloos doorschuiven
+    }
+  })
+
+  // --- Reacties op harde landingen: schok, druppels, titel ---
+  const druppels: Druppel[] = []
+  let hardeLandingen = 0
+  let eersteLanding = false
+  Events.on(engine, 'collisionStart', (e: { pairs: MBody[] }) => {
+    for (const p of e.pairs) {
+      const { bodyA: a, bodyB: b, collision } = p
+      if (!a.plugin.blik && !b.plugin.blik) continue
+      const raaktVloer = a === vloer || b === vloer
+      if (raaktVloer && !eersteLanding) {
+        eersteLanding = true
+        o.bij?.eersteLanding?.()
+      }
+      const n = collision.normal
+      const snelheid = Math.abs((a.velocity.x - b.velocity.x) * n.x + (a.velocity.y - b.velocity.y) * n.y)
+      if (snelheid < 7) continue
+      const punt = collision.supports[0] ?? a.position
+      if (druppels.length < 90) {
+        for (let i = 0; i < 8; i++) {
+          const hoek = willekeurig(-Math.PI * 0.95, -Math.PI * 0.05)
+          const v = willekeurig(0.12, 0.42)
+          druppels.push({
+            x: punt.x,
+            y: punt.y,
+            vx: Math.cos(hoek) * v,
+            vy: Math.sin(hoek) * v,
+            r: willekeurig(1.2, 3.2),
+            leven: 1,
+          })
+        }
+      }
+      if (hardeLandingen++ < 4 && o.schudElement) {
+        const dx = willekeurig(2, 4) * (Math.random() < 0.5 ? -1 : 1)
+        const dy = willekeurig(2, 4) * (Math.random() < 0.5 ? -1 : 1)
+        o.schudElement.animate(
+          [
+            { transform: `translate(${dx}px, ${dy}px)` },
+            { transform: `translate(${-dx / 2}px, ${-dy / 2}px)` },
+            { transform: 'none' },
+          ],
+          { duration: 80 },
+        )
+      }
+    }
+  })
+
+  // --- Tekenen ---
+  function tekenMidden() {
+    const { ctx } = midden
     ctx.clearRect(0, 0, B, H)
+    // Contactschaduw: een zachte donkere vlek op de vloer onder elk blikje dat (bijna) op de grond ligt
+    for (const { body } of blikjes) {
+      const afstand = vloerY - body.bounds.max.y
+      if (afstand > 14 || afstand < -4) continue
+      const halfB = (body.bounds.max.x - body.bounds.min.x) / 2
+      ctx.save()
+      ctx.translate(body.position.x + 3, vloerY)
+      ctx.scale(halfB * 1.05, 7)
+      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1)
+      g.addColorStop(0, `rgb(40 0 5 / ${0.6 * (1 - Math.max(0, afstand) / 14)})`)
+      g.addColorStop(1, 'rgb(50 0 6 / 0)')
+      ctx.fillStyle = g
+      ctx.beginPath()
+      ctx.arc(0, 0, 1, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+    }
+    // Schaduw (altijd rechtsonder) en dan het blikje zelf
+    for (const { body, soort, b, h } of blikjes) {
+      const s = midSprite[soort]
+      const pad = (s.pad * b * dpr) / s.beeld.width // rand van de schaduw, meegeschaald met dit blikje
+      ctx.save()
+      ctx.translate(body.position.x + b * 0.09, body.position.y + b * 0.14)
+      ctx.rotate(body.angle)
+      ctx.drawImage(s.schaduw!, -b / 2 - pad, -h / 2 - pad, b + pad * 2, h + pad * 2)
+      ctx.restore()
+    }
     for (const { body, soort, b, h } of blikjes) {
       ctx.save()
       ctx.translate(body.position.x, body.position.y)
       ctx.rotate(body.angle)
-      ctx.drawImage(beeld[soort].cache, -b / 2, -h / 2, b, h)
+      ctx.drawImage(midSprite[soort].beeld, -b / 2, -h / 2, b, h)
       ctx.restore()
+    }
+    for (const d of druppels) {
+      ctx.fillStyle = `rgb(${CREME} / ${d.leven})`
+      ctx.beginPath()
+      ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2)
+      ctx.fill()
     }
   }
 
-  // Minder beweging: alles in één keer laten vallen, stilletjes doorrekenen, één beeld tekenen
+  function tekenZwevers(laag: Laag | null, lijst: Zweef[], sp: ReturnType<typeof sprites> | null) {
+    if (!laag || !sp) return
+    laag.ctx.clearRect(0, 0, B, H)
+    for (const z of lijst) {
+      laag.ctx.save()
+      laag.ctx.translate(z.x, z.y)
+      laag.ctx.rotate(z.hoek)
+      laag.ctx.drawImage(sp[z.soort].beeld, -z.b / 2, -z.h / 2, z.b, z.h)
+      laag.ctx.restore()
+    }
+  }
+
+  // Minder beweging: alles in één keer laten vallen, in stilte doorrekenen, één beeld tekenen
   if (o.stil) {
-    for (let i = 0; i < o.aantal; i++) voegToe(willekeurig(-H, H * 0.5))
-    for (let i = 0; i < 240; i++) Engine.update(engine, 1000 / 60)
-    teken()
+    Events.off(engine, 'collisionStart') // geen schok of titel-duwtje bij "minder beweging"
+    for (let i = 0; i < aantal; i++) voegToe(willekeurig(0, B), willekeurig(H * 0.1, H * 0.7), 0)
+    for (let i = 0; i < 300; i++) Engine.update(engine, 1000 / 60)
+    tekenMidden()
     return { laatVallen() {}, stop() {} }
   }
 
-  // --- Interactie ---
+  // --- Draaiboek (ms na het verschijnen van de titel) ---
+  let scene = o.sceneTijd ?? 0
+  const begin = Math.max(500, scene) // de eerste drie blikjes; later als de beelden traag binnenkwamen
+  const gepland: { t: number; doe: () => void; golf?: boolean }[] = []
+  const plan = (t: number, doe: () => void, golf = false) => gepland.push({ t: begin + t, doe, golf })
+
+  // 1. drie blikjes na elkaar, verspreid over de breedte
+  const openers = Math.min(3, aantal)
+  for (let i = 0; i < openers; i++)
+    plan(i * 150, () => voegToe(B * (0.25 + i * 0.25) + willekeurig(-20, 20), -breedte * 2, 0.5))
+  // 2. de stortbui van 0,9 tot 1,2 s: golven over de hele breedte, elke golf netjes gespreid (vakjes + toeval).
+  //    Snel genoeg ingeworpen dat alles rond 1,8 s geland is en op 2,2 s stil ligt.
+  const golven = 4
+  const rest = aantal - openers
+  for (let g = 0; g < golven; g++) {
+    const inGolf = Math.round(rest / golven + (g < rest % golven ? 0.5 : 0))
+    for (let i = 0; i < inGolf; i++) {
+      const vak = B / inGolf
+      plan(
+        400 + g * 90 + willekeurig(0, 60),
+        () => voegToe(vak * (i + willekeurig(0.2, 0.8)), -breedte * willekeurig(1.2, 2), 1.2),
+        true,
+      )
+    }
+  }
+  // Achterlaag: 8–12 kleine blikjes die de hele tijd traag naar beneden zweven
+  const achterlijst: Zweef[] = []
+  if (achterSprite) {
+    const n = Math.round(willekeurig(8, 12))
+    for (let i = 0; i < n; i++) {
+      plan(-300 + (i / n) * 2000, () => {
+        const soort = kiesSoort()
+        const b = maat(breedte * 0.5, achterSprite[soort])
+        achterlijst.push({
+          soort,
+          b,
+          h: b * achterSprite[soort].verhouding,
+          x: willekeurig(0, B),
+          y: -breedte,
+          vx: willekeurig(-0.02, 0.02),
+          vy: willekeurig(0.12, 0.22),
+          hoek: willekeurig(-3, 3),
+          draai: willekeurig(-0.002, 0.002),
+        })
+      })
+    }
+  }
+  // Voorlaag: 2–3 reuzenblikjes die in de eerste seconde snel voorbij flitsen
+  const voorlijst: Zweef[] = []
+  if (voorSprite) {
+    const n = Math.random() < 0.5 ? 2 : 3
+    for (let i = 0; i < n; i++) {
+      plan(-150 + i * 200, () => {
+        const soort = kiesSoort()
+        const b = maat(breedte * 2.5, voorSprite[soort])
+        const h = b * voorSprite[soort].verhouding
+        voorlijst.push({
+          soort,
+          b,
+          h,
+          x: B * (0.15 + 0.7 * ((i * 0.55 + Math.random() * 0.3) % 1)),
+          y: -h,
+          vx: willekeurig(-0.3, 0.3),
+          vy: willekeurig(2.2, 2.8),
+          hoek: willekeurig(-0.6, 0.6),
+          draai: willekeurig(-0.004, 0.004),
+        })
+      })
+    }
+  }
+  // Meting op 2,2 s (controle van de 40%-regel): hoe hoog ligt de stapel, en hoeveel blikjes bewegen nog?
+  plan(1700, () => {
+    // in rust = slapend, of traag én tegen iets aan (bovenaan een stuiter is een blikje ook even traag, maar zweeft)
+    const rust = blikjes.filter(
+      (k) => k.body.isSleeping || (k.body.speed < 1.5 && stapNr - (k.body.plugin.contact ?? -99) < 3),
+    )
+    o.canvas.dataset.stapel = ((vloerY - Math.min(...rust.map((k) => k.body.bounds.min.y))) / H).toFixed(2)
+    o.canvas.dataset.inBeweging = String(blikjes.length - rust.length)
+  })
+  // 3,0 s: vloer weg
+  plan(2500, () => o.bij?.vloerWeg?.())
+  gepland.sort((a, b) => a.t - b.t)
+
+  // --- Interactie (midden-laag) ---
   const opruimen: (() => void)[] = []
-  let muisBeperking: any = null // eslint-disable-line @typescript-eslint/no-explicit-any
+  let muisBeperking: MBody = null
   const duw = { x: -999, y: -999, vx: 0, vy: 0 }
+  const wekAlles = () => blikjes.forEach(({ body }) => Sleeping.set(body, false))
 
   if (o.interactief) {
-    // Grijpen en gooien (muis én vinger): matter-js regelt dat zelf
-    const muis = Mouse.create(canvas)
+    const muis = Mouse.create(o.canvas)
     muis.pixelRatio = dpr
-    // matter-js blokkeert anders het scrollwiel
     muis.element.removeEventListener('wheel', muis.mousewheel)
     muis.element.removeEventListener('mousewheel', muis.mousewheel)
     muisBeperking = MouseConstraint.create(engine, {
@@ -137,10 +422,9 @@ export async function startBlikjes(o: BlikjesOpties) {
     })
     Composite.add(wereld, muisBeperking)
 
-    // Duwen: een muis die over de blikjes beweegt geeft ze een zetje in dezelfde richting
     const opBeweeg = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse') return
-      const r = canvas.getBoundingClientRect()
+      const r = o.canvas.getBoundingClientRect()
       const x = e.clientX - r.left
       const y = e.clientY - r.top
       duw.vx = x - duw.x
@@ -148,63 +432,84 @@ export async function startBlikjes(o: BlikjesOpties) {
       duw.x = x
       duw.y = y
     }
-    // Kantelen op gsm: de blikjes glijden mee (iPhone vraagt toestemming bij de eerste tik)
     const opKantel = (e: DeviceOrientationEvent) => {
       if (e.gamma == null) return
-      engine.gravity.x = Math.max(-1, Math.min(1, e.gamma / 40))
+      const gx = klem(e.gamma / 40, -1, 1)
+      if (Math.abs(gx - engine.gravity.x) > 0.05) wekAlles() // slapende blikjes voelen zwaartekracht niet
+      engine.gravity.x = gx
     }
-    canvas.addEventListener('pointermove', opBeweeg)
-    canvas.addEventListener('pointerdown', vraagGyroscoopToestemming)
+    o.canvas.addEventListener('pointermove', opBeweeg)
+    o.canvas.addEventListener('pointerdown', vraagGyroscoopToestemming)
     window.addEventListener('deviceorientation', opKantel)
     opruimen.push(() => {
-      canvas.removeEventListener('pointermove', opBeweeg)
-      canvas.removeEventListener('pointerdown', vraagGyroscoopToestemming)
+      o.canvas.removeEventListener('pointermove', opBeweeg)
+      o.canvas.removeEventListener('pointerdown', vraagGyroscoopToestemming)
       window.removeEventListener('deviceorientation', opKantel)
     })
   }
 
   function duwBlikjes() {
-    const snelheid = Math.hypot(duw.vx, duw.vy)
-    if (snelheid < 1 || muisBeperking?.body) return
+    if (Math.hypot(duw.vx, duw.vy) < 1 || muisBeperking?.body) return
     for (const { body } of blikjes) {
       const afstand = Math.hypot(body.position.x - duw.x, body.position.y - duw.y)
       if (afstand > 80) continue
       const kracht = (1 - afstand / 80) * 0.5
+      Sleeping.set(body, false)
       Body.setVelocity(body, {
-        x: body.velocity.x + Math.max(-30, Math.min(30, duw.vx)) * kracht,
-        y: body.velocity.y + Math.max(-30, Math.min(30, duw.vy)) * kracht,
+        x: body.velocity.x + klem(duw.vx, -30, 30) * kracht,
+        y: body.velocity.y + klem(duw.vy, -30, 30) * kracht,
       })
     }
     duw.vx = duw.vy = 0
   }
 
-  // --- De lus: regen laten vallen, rekenen, tekenen ---
-  const start = performance.now()
-  const tussenTijd = o.regenDuurMs / o.aantal
-  let vorige = start
-  let frameMs = 1000 / 60 // gemiddelde frametijd
+  // --- De lus ---
+  let vorige = performance.now()
+  let frameMs = 1000 / 60
   let frames = 0
-  let regenStopt = false // te traag toestel: geen extra blikjes meer
+  let teTraag = false // gemiddeld onder 50 fps: geen nieuwe natuurkunde-blikjes meer
   let raf = 0
 
   function stap(nu: number) {
-    const dt = nu - vorige
+    const dt = Math.min(nu - vorige, 50) // na een hapering niet in één keer vooruit springen
     vorige = nu
+    scene += dt
     frames++
     frameMs = frameMs * 0.9 + dt * 0.1
-    if (frames > 15 && frameMs > 1000 / 50) regenStopt = true
+    if (frames > 20 && frameMs > 1000 / 50) teTraag = true
 
-    const moetEr = Math.min(o.aantal, Math.floor((nu - start) / tussenTijd) + 1)
-    while (!regenStopt && blikjes.length < moetEr) voegToe(-o.breedte * 2 - Math.random() * 80)
+    while (gepland.length && gepland[0].t <= scene) {
+      const { doe, golf } = gepland.shift()!
+      if (!(golf && teTraag)) doe() // te traag toestel: de rest van de stortbui overslaan
+    }
 
     duwBlikjes()
     Engine.update(engine, Math.min(dt, 1000 / 30))
-    teken()
+
+    for (const lijst of [achterlijst, voorlijst])
+      for (const z of lijst) {
+        if (vallen) z.vy += 0.004 * dt
+        z.x += z.vx * dt
+        z.y += z.vy * dt
+        z.hoek += z.draai * dt
+      }
+    for (let i = druppels.length - 1; i >= 0; i--) {
+      const d = druppels[i]
+      d.vy += 0.0016 * dt
+      d.x += d.vx * dt
+      d.y += d.vy * dt
+      d.leven -= dt / 450
+      if (d.leven <= 0) druppels.splice(i, 1)
+    }
+
+    tekenZwevers(achter, achterlijst, achterSprite)
+    tekenMidden()
+    tekenZwevers(voor, voorlijst, voorSprite)
     raf = requestAnimationFrame(stap)
   }
   raf = requestAnimationFrame(stap)
 
-  // Pauzeren als het tabblad verborgen is
+  // Pauzeren als het tabblad verborgen is (de scenetijd loopt dan ook niet door)
   const opZichtbaar = () => {
     cancelAnimationFrame(raf)
     if (!document.hidden) {
@@ -218,15 +523,19 @@ export async function startBlikjes(o: BlikjesOpties) {
   return {
     /** De vloer valt weg: alle blikjes vallen uit beeld. */
     laatVallen() {
-      regenStopt = true
+      if (vallen) return
+      vallen = true
+      gepland.length = 0
       Composite.remove(wereld, vloer)
       if (muisBeperking) Composite.remove(wereld, muisBeperking)
       engine.gravity.x = 0
-      engine.gravity.y = 1.6
+      engine.gravity.y = 2.6
+      wekAlles()
     },
     stop() {
       cancelAnimationFrame(raf)
       opruimen.forEach((f) => f())
+      Events.off(engine)
       Composite.clear(wereld, false)
       Engine.clear(engine)
     },
