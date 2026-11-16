@@ -33,7 +33,7 @@ export function SpelerKaart({ speler }: { speler: Speler }) {
             <motion.span
               aria-hidden="true"
               style={{ backgroundImage: glans }}
-              className="pointer-events-none absolute inset-0 rounded-2xl mix-blend-color-dodge"
+              className="pointer-events-none absolute inset-0 rounded-2xl mix-blend-color-dodge toutbien:hidden"
             />
           )}
         </Link>

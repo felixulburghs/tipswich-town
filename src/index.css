@@ -44,8 +44,55 @@
   --gloed-nav-logo: drop-shadow(0 4px 12px rgb(8 72 184 / 0.6));
 }
 
-/* Sponsorthema: wordt aangezet via SPONSOR_TAKEOVER in src/config.ts. Ingevuld in stap 2. */
+/*
+ * Sponsorthema Tout Bien: aan via SPONSOR_TAKEOVER in src/config.ts (zet data-theme op <html>).
+ * Dezelfde variabelen krijgen andere waarden: crème in plaats van navy, rood blijft rood.
+ * Voor de enkele plekken die meer nodig hebben dan een kleur: de variant "toutbien:" in een
+ * className, bv. toutbien:hidden. Die doet alleen iets als het thema aan staat.
+ */
+@custom-variant toutbien (&:where([data-theme='toutbien'], [data-theme='toutbien'] *));
+
 [data-theme='toutbien'] {
+  --color-navy-950: #fff9f2; /* achtergrond: crème */
+  --color-navy-900: #fff1e0; /* kaarten: tweede crème */
+  --color-royal-700: #fff1e0; /* panelen: plat, dus zelfde crème (verloop valt weg) */
+  --color-royal-500: #d61022; /* highlights worden rood */
+  --color-red-600: #d61022;
+  --color-red-800: #9e0c1e; /* ingedrukt rood */
+  --color-orange-400: #d61022; /* kleine accenten en focusranden */
+  --color-white: #fff9f2; /* "wit" = crème op rood */
+
+  --color-tekst: #121212;
+  --color-tekst-zacht: #57504a; /* effen kleur: zwart met 50–60% doorzichtigheid haalt geen AA op crème */
+  --color-tekst-vaag: #57504a;
+  --color-lijn: rgb(18 18 18 / 0.14);
+
+  --font-display: 'Archivo', 'Arial Black', sans-serif;
+
+  /* Geen verloop, geen gloed */
+  --licht-zaal: none;
+  --licht-pagina: none;
+  --licht-speler: none;
+  --gloed-logo: none;
+  --gloed-nav-logo: none;
+}
+
+/* Geen schaduwen in het thema (de ringen/lijnen blijven, die gebruiken een andere variabele) */
+[data-theme='toutbien'] * {
+  --tw-shadow: 0 0 #0000 !important;
+}
+
+/* In de "base"-laag, zodat een tekstkleur-klas op een element (bv. toutbien:text-white) altijd wint */
+@layer base {
+  [data-theme='toutbien'] .font-display {
+    font-style: italic;
+    font-weight: 900;
+    font-stretch: 125%;
+  }
+  [data-theme='toutbien'] :is(h1, h2, h3).font-display,
+  [data-theme='toutbien'] :is(h1, h2, h3) .font-display {
+    color: var(--color-red-600);
+  }
 }
 
 html {

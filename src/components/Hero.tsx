@@ -64,7 +64,7 @@ export function Hero() {
             to={`/nieuws/${laatsteNieuws.slug}`}
             className="flex items-center gap-3 rounded-xl bg-navy-900/90 p-3 text-left shadow-lg shadow-red-600/20 ring-2 ring-red-600 transition hover:bg-navy-900 hover:shadow-red-600/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
           >
-            <span className="flex shrink-0 items-center gap-1.5 rounded-md bg-red-600 px-2 py-1 font-display text-sm tracking-wide uppercase">
+            <span className="flex shrink-0 items-center gap-1.5 rounded-md bg-red-600 px-2 py-1 font-display text-sm tracking-wide uppercase toutbien:text-white">
               {/* Pulserend bolletje; motion-safe: niet bij "minder beweging" */}
               <span className="relative flex size-2" aria-hidden="true">
                 <span className="absolute inline-flex size-full rounded-full bg-white opacity-75 motion-safe:animate-ping" />

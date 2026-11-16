@@ -23,7 +23,7 @@ export function PenseelTitel({ children, className = '' }: { children: ReactNode
           d="M6 14 C40 6 90 10 140 7 S240 4 292 9 L297 18 288 24 298 32 290 40 296 49 C250 55 180 52 120 55 S40 56 8 52 L2 44 10 37 1 29 9 21z"
         />
       </motion.svg>
-      <span className="relative">{children}</span>
+      <span className="relative toutbien:text-white">{children}</span>
     </span>
   )
 }

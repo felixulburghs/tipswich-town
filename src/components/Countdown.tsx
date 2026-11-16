@@ -64,7 +64,7 @@ export function Countdown({ match }: { match: Match }) {
     >
       <div className="flex items-center gap-2">
         <span
-          className={`grid size-8 shrink-0 place-items-center rounded-full ${
+          className={`grid size-8 shrink-0 place-items-center rounded-full toutbien:text-white ${
             match.thuis ? 'bg-red-600' : 'bg-royal-500'
           }`}
         >
