@@ -23,7 +23,7 @@ export function InstagramKnop() {
       target="_blank"
       rel="noreferrer"
       aria-label="Volg Tipswich Town op Instagram"
-      className="flex items-center gap-2 rounded-full bg-red-600 p-2 font-display tracking-wide uppercase shadow-lg shadow-red-600/30 transition hover:scale-105 hover:bg-red-600/90 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400 sm:py-2 sm:pr-4 sm:pl-2.5"
+      className="flex items-center gap-2 rounded-full bg-red-600 p-2 font-display toutbien:text-white tracking-wide uppercase shadow-lg shadow-red-600/30 transition hover:scale-105 hover:bg-red-600/90 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400 sm:py-2 sm:pr-4 sm:pl-2.5"
     >
       <InstagramIcoon className="size-6" />
       <span className="hidden sm:inline">@tipswich_town</span>

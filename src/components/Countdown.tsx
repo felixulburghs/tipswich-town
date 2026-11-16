@@ -37,7 +37,7 @@ function Vakje({ waarde, label }: { waarde: number; label: string }) {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="absolute inset-0 text-center font-display text-4xl tabular-nums sm:text-5xl"
+            className="absolute inset-0 text-center font-display text-4xl tabular-nums sm:text-5xl toutbien:[font-stretch:100%]"
           >
             {tekst}
           </motion.span>

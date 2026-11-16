@@ -36,7 +36,7 @@ export function Hero() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="mt-4 font-display text-6xl leading-none uppercase sm:text-8xl"
+        className="mt-4 font-display text-6xl leading-none uppercase sm:text-8xl toutbien:text-[11.5vw] sm:toutbien:text-8xl"
       >
         Tipswich
         <br />

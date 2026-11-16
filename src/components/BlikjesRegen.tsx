@@ -93,12 +93,15 @@ export function BlikjesRegen() {
         transition={{ duration: VAL_MS / 1000, ease: [0.55, 0, 0.9, 0.4] }}
       >
         <motion.p
-          className="max-w-[14ch] text-center font-display text-[11vw] leading-[0.9] text-balance text-white uppercase sm:text-[min(8vw,7.5rem)]"
+          className="text-center font-display text-[11vw] leading-[0.95] text-white uppercase sm:text-[min(8vw,7.5rem)]"
           initial={minderBeweging ? false : { scale: 2.6, opacity: 0, rotate: -6 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
           transition={{ type: 'spring', stiffness: 520, damping: 22, mass: 0.9 }}
         >
-          Tipswich Town × Tout Bien
+          {/* Drie regels, zodat de × altijd alleen in het midden staat */}
+          <span className="block text-balance">Tipswich Town</span>
+          <span className="block">×</span>
+          <span className="block">Tout Bien</span>
         </motion.p>
       </motion.div>
 
@@ -108,7 +111,7 @@ export function BlikjesRegen() {
         <button
           type="button"
           onClick={naarDeSite}
-          className="absolute bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 rounded-lg bg-white px-5 py-3 font-display text-lg text-red-600 uppercase transition hover:bg-white/90 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          className="absolute bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 rounded-lg bg-white px-5 py-3 whitespace-nowrap font-display text-lg text-red-600 uppercase transition hover:bg-white/90 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
         >
           Naar de site
         </button>
