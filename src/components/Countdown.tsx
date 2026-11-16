@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import type { Match } from '../types'
 import { aftrapVan, datumTekst } from '../lib/matchen'
+import { useIntrede } from '../lib/intrede'
 import { useNu } from '../lib/nu'
 import { ThuisUitIcoon } from './ThuisUitIcoon'
 
@@ -47,6 +48,7 @@ function Vakje({ waarde, label }: { waarde: number | null; label: string }) {
 export function Countdown({ match, eigenIntrede = true }: { match: Match; eigenIntrede?: boolean }) {
   // De cijfers pas tonen met de echte tijd: in de voorgerenderde HTML zou anders de tijd van de build staan
   const { tijd, echt } = useNu(true)
+  const { vrij } = useIntrede() // na een paginawissel pas binnenkomen als het bier weg is
   const t = splitsTijd(aftrapVan(match)!.getTime() - tijd.getTime()) // volgendeMatch() heeft altijd een datum
   const { dagen, uren, min, sec } = echt ? t : { dagen: null, uren: null, min: null, sec: null }
 
@@ -54,7 +56,7 @@ export function Countdown({ match, eigenIntrede = true }: { match: Match; eigenI
     <motion.section
       aria-labelledby="volgende-match"
       initial={eigenIntrede ? { opacity: 0, y: 24 } : false}
-      animate={{ opacity: 1, y: 0 }}
+      animate={!eigenIntrede || vrij ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.5, delay: 0.5 }}
       className="w-full max-w-md text-left rounded-2xl bg-gradient-to-br from-royal-700 to-navy-900 p-5 shadow-2xl shadow-royal-500/20 ring-1 ring-lijn"
     >

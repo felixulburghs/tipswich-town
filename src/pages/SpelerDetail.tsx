@@ -1,3 +1,4 @@
+import { SPONSOR_TAKEOVER } from '../config'
 import { Link, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { DatumBlok } from '../components/kalender/MatchRij'
@@ -23,6 +24,14 @@ function StatBlok({ waarde, label }: { waarde: number; label: string }) {
 function meervoud(n: number, een: string, meer: string) {
   return `${n} ${n === 1 ? een : meer}`
 }
+
+/**
+ * Lettergrootte voor een kop in het brede Tout Bien-lettertype: zo groot mogelijk (max 6rem, min 2rem),
+ * maar het langste woord past altijd in de kolom (cqw = % van de breedte van de @container-kolom).
+ * Archivo op 125% breedte is ± 0,92 em per letter; 1 em per letter geeft wat ruimte voor het schuine italic.
+ */
+const passendeKop = (tekst: string) =>
+  `clamp(2rem, ${(100 / Math.max(...tekst.split(/\s+/).map((w) => w.length))).toFixed(2)}cqw, 6rem)`
 
 /** Knop naar de vorige of volgende speler. */
 function BuurLink({ speler, richting }: { speler: Speler; richting: 'vorige' | 'volgende' }) {
@@ -101,9 +110,15 @@ export function SpelerDetail() {
             <KaartVoorkant speler={speler} />
           </motion.div>
 
-          <div className="relative text-center sm:text-left">
+          {/* Tout Bien: de kolom krijgt een echte breedte (@container), en de achternaam schaalt naar het langste woord */}
+          <div className="relative text-center sm:text-left toutbien:@container toutbien:min-w-0 toutbien:self-stretch sm:toutbien:flex-1">
             <p className="text-lg text-tekst/70">{voornaam}</p>
-            <h1 className="font-display text-6xl leading-none uppercase sm:text-8xl">{achternaam}</h1>
+            <h1
+              className="font-display text-6xl leading-none uppercase sm:text-8xl"
+              style={SPONSOR_TAKEOVER ? { fontSize: passendeKop(achternaam) } : undefined}
+            >
+              {achternaam}
+            </h1>
             <p className="mt-2 font-display text-2xl text-red-600">
               #{speler.nummer}
               {speler.positie && <span className="ml-3 text-tekst/70">{speler.positie}</span>}

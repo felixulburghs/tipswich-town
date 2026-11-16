@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { MotionConfig, motion, useAnimate } from 'framer-motion'
 import { SPONSOR_TAKEOVER } from '../config'
+import { vul } from '../lib/bier'
 import { BIER_DUUR_MS, BierVulling } from './BierVulling'
 import { BlikjesBui } from './BlikjesBui'
 
@@ -53,6 +54,8 @@ function LogoKnopInhoud({ eigenIntrede }: { eigenIntrede: boolean }) {
 
     // Scherm vol bier; opnieuw klikken tijdens het bier start de timer opnieuw
     setBier(true)
+    // Takeover: hetzelfde vloeibare bier als de paginaovergang (lib/bier.ts); anders het oude bier (BierVulling)
+    if (SPONSOR_TAKEOVER) vul(BIER_DUUR_MS)
     clearTimeout(bierTimer.current)
     bierTimer.current = setTimeout(() => {
       setBier(false)
@@ -116,7 +119,7 @@ function LogoKnopInhoud({ eigenIntrede }: { eigenIntrede: boolean }) {
       </span>
 
       {/* Scherm vol bier (key={klik}: bij een nieuwe klik begint het vullen opnieuw) */}
-      {bier && <BierVulling key={klik} />}
+      {bier && !SPONSOR_TAKEOVER && <BierVulling key={klik} />}
       {bui > 0 && <BlikjesBui key={bui} klaar={() => setBui(0)} />}
     </motion.button>
   )

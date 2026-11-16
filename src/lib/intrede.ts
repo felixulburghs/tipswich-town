@@ -1,16 +1,26 @@
-import { createContext, useContext } from 'react'
-import { useReducedMotion, type TargetAndTransition, type Transition } from 'framer-motion'
+import { createContext, useContext, type RefObject } from 'react'
+import { useInView, useReducedMotion, type TargetAndTransition, type Transition } from 'framer-motion'
 
 /**
  * De intrede van de homepagina tijdens de takeover: één signaal voor de hele pagina.
  * - vrij: mag de cascade beginnen? Na de blikjesregen pas als het rode scherm wegtrekt,
- *   bij een gewoon bezoek meteen.
+ *   na een paginawissel (bier) pas als het schuim voorbij 60% zakt, bij een gewoon bezoek meteen.
  * - kruis: mag de × tussen schild en logo al zichtbaar zijn? (Na de regen pas als de vliegende
  *   × uit de titel er precies op geland is.)
  */
 export type Intrede = { vrij: boolean; naRegen: boolean; kruis: boolean }
 export const IntredeContext = createContext<Intrede>({ vrij: true, naRegen: false, kruis: true })
 export const useIntrede = () => useContext(IntredeContext)
+
+/**
+ * Voor intredes die starten zodra iets in beeld komt: in beeld én de pagina is vrij.
+ * (Anders speelt de animatie onzichtbaar af onder het bier van de paginawissel.)
+ */
+export function useInBeeldEnVrij(ref: RefObject<Element | null>, opties?: Parameters<typeof useInView>[1]) {
+  const inBeeld = useInView(ref, { once: true, ...opties })
+  const { vrij } = useIntrede()
+  return inBeeld && vrij
+}
 
 /** Tijd tussen twee stappen van de cascade (nav, logo's, titel, penseel, kop, kaarten, ...). */
 export const STAP = 0.06

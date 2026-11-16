@@ -1,5 +1,6 @@
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useInBeeldEnVrij } from '../../lib/intrede'
 import { aftrapVan, resultaat } from '../../lib/matchen'
 import { assistsVan, goalsVan, naamVan, telPerSpeler } from '../../lib/spelers'
 import type { Match, Resultaat, SpelerRef } from '../../types'
@@ -65,6 +66,8 @@ function SpelerTelling({ titel, nummers }: { titel: string; nummers: SpelerRef[]
  * Komend: knop om hem in je agenda te zetten. `index` zorgt voor het gestaggerd inschuiven.
  */
 export function MatchRij({ match, index }: { match: Match; index: number }) {
+  const ref = useRef<HTMLLIElement>(null)
+  const zichtbaar = useInBeeldEnVrij(ref, { margin: '-40px' }) // in beeld én niet meer onder het bier
   const [open, setOpen] = useState(false)
   const r = resultaat(match)
   const detailId = `detail-${match.datum ?? match.tegenstander}`
@@ -88,9 +91,9 @@ export function MatchRij({ match, index }: { match: Match; index: number }) {
 
   return (
     <motion.li
+      ref={ref}
       initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
+      animate={zichtbaar ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
       transition={{ duration: 0.35, delay: index * 0.05 }}
       className={`overflow-hidden rounded-xl border-l-4 bg-navy-900/80 ring-1 ring-lijn ${
         r ? randKleur[r] : 'border-royal-700'
