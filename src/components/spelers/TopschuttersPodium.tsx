@@ -42,10 +42,10 @@ function BlikjesStapel({ aantal }: { aantal: number }) {
       {Array.from({ length: aantal }, (_, i) => (
         <motion.img
           key={i}
-          src="/sponsors/can-pils.png"
+          src="/sponsors/can-pils-klein.webp" // 72 px brede kopie: hier is een blikje maar ±20 px breed
           alt=""
-          width={20}
-          height={36}
+          width={72}
+          height={128}
           loading="lazy"
           decoding="async"
           className="h-8 w-auto sm:h-10"

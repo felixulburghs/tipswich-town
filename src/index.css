@@ -53,6 +53,47 @@
  */
 @custom-variant toutbien (&:where([data-theme='toutbien'], [data-theme='toutbien'] *));
 
+/*
+ * Reservelettertypes met dezelfde breedte als Archivo en Inter, voor de fractie van een seconde
+ * voor die geladen zijn. Zonder dit is de tekst eerst smaller of breder, breken regels anders af
+ * en verspringt de pagina als het echte lettertype binnenkomt (CLS in Lighthouse).
+ * size-adjust = gemeten breedteverschil; per font-stretch een eigen waarde, omdat Arial Black
+ * geen breedte-as heeft. (Op toestellen zonder Arial Black, zoals Android, valt dit weg.)
+ */
+@font-face {
+  font-family: 'Archivo fallback';
+  src: local('Arial Black'), local('Arial-Black');
+  font-weight: 900;
+  font-stretch: 125%;
+  size-adjust: 117.6%;
+}
+@font-face {
+  font-family: 'Archivo fallback';
+  src: local('Arial Black'), local('Arial-Black');
+  font-weight: 900;
+  font-stretch: 76% 110%;
+  size-adjust: 96.3%;
+}
+@font-face {
+  font-family: 'Archivo fallback';
+  src: local('Arial Black'), local('Arial-Black');
+  font-weight: 900;
+  font-stretch: 50% 75%;
+  size-adjust: 68.3%;
+}
+@font-face {
+  font-family: 'Inter fallback';
+  src: local('Arial'), local('ArialMT');
+  font-weight: 100 500;
+  size-adjust: 105.8%;
+}
+@font-face {
+  font-family: 'Inter fallback';
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  font-weight: 501 900;
+  size-adjust: 101.4%;
+}
+
 [data-theme='toutbien'] {
   --color-navy-950: #fff9f2; /* achtergrond: crème */
   --color-navy-900: #fff1e0; /* kaarten: tweede crème */
@@ -68,8 +109,10 @@
   --color-tekst-zacht: #55557a; /* effen kleur: navy met 50–60% doorzichtigheid haalt geen AA op crème */
   --color-tekst-vaag: #55557a;
   --color-lijn: rgb(8 8 56 / 0.18);
+  --badge-licht: 28%; /* tegenstander-badges: crème initialen halen zo AA op elke kleur (36% niet op geel-groen) */
 
-  --font-display: 'Archivo', 'Arial Black', sans-serif;
+  --font-display: 'Archivo', 'Archivo fallback', 'Arial Black', sans-serif;
+  --font-sans: 'Inter', 'Inter fallback', system-ui, sans-serif;
 
   /* Geen verloop, geen gloed */
   --licht-zaal: none;

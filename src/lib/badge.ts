@@ -8,7 +8,11 @@ export function initialen(naam: string): string {
     .split(/\s+/)
     .map((w) => w.replace(/[^\p{L}]/gu, '')) // enkel letters (weg met '86, ', ...)
     .filter((w) => w && !VULWOORDEN.has(w.toLowerCase()))
-  if (woorden.length === 0) return naam.replace(/[^\p{L}]/gu, '').slice(0, 2).toUpperCase()
+  if (woorden.length === 0)
+    return naam
+      .replace(/[^\p{L}]/gu, '')
+      .slice(0, 2)
+      .toUpperCase()
   if (woorden.length === 1) return woorden[0].slice(0, 2).toUpperCase()
   return (woorden[0][0] + woorden[1][0]).toUpperCase()
 }
@@ -21,5 +25,6 @@ export function initialen(naam: string): string {
 export function kleurVanNaam(naam: string): string {
   let hash = 0
   for (const teken of naam) hash = (hash * 31 + teken.charCodeAt(0)) >>> 0
-  return `hsl(${hash % 360} 55% 36%)`
+  // Lichtheid via een CSS-variabele (standaard 36%): het Tout Bien-thema maakt ze iets donkerder (index.css)
+  return `hsl(${hash % 360} 55% var(--badge-licht, 36%))`
 }

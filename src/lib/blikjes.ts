@@ -16,7 +16,9 @@ const { Engine, Bodies, Body, Composite, Events, Mouse, MouseConstraint, Sleepin
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MBody = any
 
-const BEELDEN = { pils: '/sponsors/can-pils.png', rouge: '/sponsors/can-rouge.png' }
+// WebP-kopieën van de PNG's van de sponsor (zelfde map), op de grootste maat die de site ooit toont:
+// Pils 360 px breed (104 px × 1,12 × 3× scherm), Rouge 268 px (de originele breedte). 78 KB i.p.v. 760 KB.
+const BEELDEN = { pils: '/sponsors/can-pils.webp', rouge: '/sponsors/can-rouge.webp' }
 type Soort = keyof typeof BEELDEN
 
 const GROOTTE = 0.12 // elk blikje ±12%
@@ -366,6 +368,7 @@ export async function startBlikjes(o: BlikjesOpties) {
   }
   let extra = 0
   function vulVloer(enkelOpVloer: boolean) {
+    if (teTraag) return // te traag toestel: geen extra blikjes
     for (const [van, tot] of vloerGaten(enkelOpVloer)) {
       const n = Math.max(1, Math.round((tot - van) / (breedte * 1.2)))
       for (let i = 0; i < n && extra < 14; i++, extra++)

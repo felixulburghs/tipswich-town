@@ -6,7 +6,7 @@ export function TegenstanderBadge({ naam }: { naam: string }) {
     <span
       aria-hidden="true"
       style={{ backgroundColor: kleurVanNaam(naam) }}
-      className="grid size-10 shrink-0 place-items-center rounded-full font-display text-sm tracking-wide ring-2 ring-tekst/15"
+      className="grid size-10 shrink-0 place-items-center rounded-full font-display text-sm tracking-wide ring-2 ring-tekst/15 toutbien:text-white"
     >
       {initialen(naam)}
     </span>

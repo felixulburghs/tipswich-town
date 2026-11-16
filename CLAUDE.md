@@ -16,6 +16,12 @@ Instagram: @tipswich_town. Slogans: "Just the tip", "UP THE TIPS!", "Zaalvoetbal
 - Foto's in `public/spelers/<achternaam>.jpg`, logo in `public/logo.webp` (transparant), favicon in `public/favicon.png`, iPhone-icoon in `public/apple-touch-icon.png`
 - Hosting: Vercel of Netlify, gekoppeld aan GitHub
 
+## Sponsor-takeover (Tout Bien)
+- Eén schakelaar: `SPONSOR_TAKEOVER` in `src/config.ts`. Daar staan ook `SPONSOR` (url, logo), `RESPONSIBLE_LINE` en `SPONSOR_KOP`.
+- `vite.config.ts` zet bij het bouwen `data-theme="toutbien"` en het lettertype Archivo in `index.html`; de kleuren staan in `src/index.css` onder `[data-theme='toutbien']`. Klassen die enkel in het thema gelden: `toutbien:...`.
+- Sponsorbestanden in `public/sponsors/` (enkel van Felix, nooit van hun site halen). De `.webp`-blikjes zijn verkleinde kopieën van de `.png`'s; maak ze opnieuw als die PNG's veranderen.
+- De sponsorstrook in de footer blijft staan als de takeover uit is.
+
 ## Huisstijl (uit Instagram)
 | Token        | Hex       | Gebruik                                   |
 |--------------|-----------|-------------------------------------------|

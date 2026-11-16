@@ -2,18 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
-import { SPONSOR_TAKEOVER } from './config'
-
-// Vóór de eerste render, zodat je nooit even het gewone thema ziet flitsen
-if (SPONSOR_TAKEOVER) {
-  document.documentElement.dataset.theme = 'toutbien'
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#d61022')
-  // Archivo alleen laden als het thema aan staat (italic, breedte 62–125%, gewicht 800–900)
-  const font = document.createElement('link')
-  font.rel = 'stylesheet'
-  font.href = 'https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@1,62..125,800..900&display=swap'
-  document.head.append(font)
-}
+// Het Tout Bien-thema (data-theme, lettertype) zet vite.config.ts al in de HTML, zie SPONSOR_TAKEOVER in config.ts
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

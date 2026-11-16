@@ -61,7 +61,7 @@ export function BlikjesRegen() {
     // Wacht niet eeuwig op trage beelden: na 6 s gaat het scherm hoe dan ook weg
     let timer = setTimeout(naarDeSite, 6000)
     // Blikjes al ophalen terwijl de natuurkunde-code nog laadt (de browser bewaart ze voor straks)
-    for (const src of ['/sponsors/can-pils.png', '/sponsors/can-rouge.png']) new Image().src = src
+    for (const src of ['/sponsors/can-pils.webp', '/sponsors/can-rouge.webp']) new Image().src = src
 
     import('../lib/blikjes').then(async ({ startBlikjes }) => {
       if (gestopt || !midden.current) return
