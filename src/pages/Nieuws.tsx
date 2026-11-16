@@ -13,10 +13,10 @@ export function Nieuws() {
         <h1 className="font-display text-5xl leading-none uppercase sm:text-7xl">
           <PenseelTitel>Nieuws</PenseelTitel>
         </h1>
-        <p className="mt-3 text-white/70">Het laatste nieuws over de club en de spelers.</p>
+        <p className="mt-3 text-tekst/70">Het laatste nieuws over de club en de spelers.</p>
 
         {berichten.length === 0 ? (
-          <p className="mt-10 text-white/60">Nog geen nieuws. Kom binnenkort terug.</p>
+          <p className="mt-10 text-tekst-zacht">Nog geen nieuws. Kom binnenkort terug.</p>
         ) : (
           <ul className="mt-10 space-y-4">
             {berichten.map((b) => (

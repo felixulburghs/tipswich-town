@@ -4,7 +4,7 @@ import { SpelerFoto } from './SpelerFoto'
 /** Kaart voor de coach: geen stats, niet klikbaar. */
 export function CoachKaart() {
   return (
-    <div className="flex items-center gap-4 rounded-2xl bg-navy-900/80 p-4 ring-1 ring-white/10">
+    <div className="flex items-center gap-4 rounded-2xl bg-navy-900/80 p-4 ring-1 ring-lijn">
       <SpelerFoto
         foto={coach.foto}
         alt={coach.naam}

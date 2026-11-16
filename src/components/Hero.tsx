@@ -26,7 +26,7 @@ export function Hero() {
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="flex items-center gap-2 text-sm font-semibold text-white/70"
+        className="flex items-center gap-2 text-sm font-semibold text-tekst/70"
       >
         <Kroon className="h-3 text-orange-400" />
         {reeks}, seizoen {seizoen}
@@ -47,7 +47,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="mt-5 font-display text-xl tracking-wide text-white/90 uppercase sm:text-2xl"
+        className="mt-5 font-display text-xl tracking-wide text-tekst/90 uppercase sm:text-2xl"
       >
         Up the Tips!
       </motion.p>
@@ -74,9 +74,9 @@ export function Hero() {
             </span>
             <span className="min-w-0 flex-1">
               <span className="line-clamp-2 font-display text-lg leading-tight uppercase">{laatsteNieuws.titel}</span>
-              <span className="block text-xs text-white/60">{nieuwsDatum(laatsteNieuws)}</span>
+              <span className="block text-xs text-tekst-zacht">{nieuwsDatum(laatsteNieuws)}</span>
             </span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" className="size-4 shrink-0 text-white/80">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" className="size-4 shrink-0 text-tekst/80">
               <path d="M9 6l6 6-6 6" />
             </svg>
           </Link>
@@ -93,7 +93,7 @@ export function Hero() {
 
       <Link
         to="/kalender"
-        className="mt-4 text-sm font-semibold text-white/80 underline decoration-red-600 decoration-2 underline-offset-4 hover:text-white"
+        className="mt-4 text-sm font-semibold text-tekst/80 underline decoration-red-600 decoration-2 underline-offset-4 hover:text-tekst"
       >
         Bekijk het volledige speelschema
       </Link>

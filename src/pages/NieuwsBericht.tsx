@@ -5,7 +5,7 @@ import { berichtMet, nieuwsBestand, nieuwsDatum } from '../lib/nieuws'
 
 function TerugLink() {
   return (
-    <Link to="/nieuws" className="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white">
+    <Link to="/nieuws" className="inline-flex items-center gap-1 text-sm text-tekst/70 hover:text-tekst">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" className="size-4">
         <path d="M15 6l-6 6 6 6" />
       </svg>
@@ -24,7 +24,7 @@ export function NieuwsBericht() {
       <main className="grid min-h-svh place-items-center bg-navy-950 px-4 text-center">
         <div>
           <p className="font-display text-4xl uppercase">Bericht niet gevonden</p>
-          <p className="mt-2 text-white/60">Misschien is de link veranderd.</p>
+          <p className="mt-2 text-tekst-zacht">Misschien is de link veranderd.</p>
           <div className="mt-4">
             <TerugLink />
           </div>
@@ -43,7 +43,7 @@ export function NieuwsBericht() {
     >
       <article className="mx-auto max-w-2xl">
         <TerugLink />
-        <time dateTime={bericht.datum} className="mt-6 block text-sm text-white/60">
+        <time dateTime={bericht.datum} className="mt-6 block text-sm text-tekst-zacht">
           {nieuwsDatum(bericht)}
         </time>
         <h1 className="mt-2 font-display text-4xl leading-none text-balance uppercase sm:text-6xl">{bericht.titel}</h1>
@@ -56,7 +56,7 @@ export function NieuwsBericht() {
           </div>
         )}
 
-        <div className="mt-8 space-y-5 text-lg leading-relaxed text-white/85">
+        <div className="mt-8 space-y-5 text-lg leading-relaxed text-tekst/85">
           {eerste && <p>{eerste}</p>}
 
           {bericht.video && <NieuwsVideo bestand={bericht.video} titel={bericht.titel} />}
@@ -66,7 +66,7 @@ export function NieuwsBericht() {
               alt=""
               loading="lazy"
               decoding="async"
-              className="w-full rounded-xl ring-1 ring-white/10"
+              className="w-full rounded-xl ring-1 ring-lijn"
             />
           )}
 

@@ -19,7 +19,7 @@ export function DatumBlok({ datum }: { datum: Date | null }) {
   if (!datum) {
     return (
       <div className="flex w-11 shrink-0 flex-col items-center justify-center self-stretch rounded-lg bg-navy-950/70 py-1">
-        <span className="font-display text-2xl text-white/60" aria-label="Datum onbekend">?</span>
+        <span className="font-display text-2xl text-tekst-zacht" aria-label="Datum onbekend">?</span>
       </div>
     )
   }
@@ -27,9 +27,9 @@ export function DatumBlok({ datum }: { datum: Date | null }) {
   const weekdag = datum.toLocaleDateString('nl-BE', { weekday: 'short' }).replace('.', '')
   return (
     <div className="flex w-11 shrink-0 flex-col items-center rounded-lg bg-navy-950/70 py-1 leading-none">
-      <span className="text-[10px] text-white/50">{weekdag}</span>
+      <span className="text-[10px] text-tekst-vaag">{weekdag}</span>
       <span className="font-display text-2xl">{datum.getDate()}</span>
-      <span className="text-[10px] text-white/60">{maand}</span>
+      <span className="text-[10px] text-tekst-zacht">{maand}</span>
     </div>
   )
 }
@@ -41,15 +41,15 @@ function SpelerTelling({ titel, nummers }: { titel: string; nummers: SpelerRef[]
     <div>
       <h4 className="text-xs font-semibold text-orange-400">{titel}</h4>
       {telling.length === 0 ? (
-        <p className="mt-1 text-sm text-white/50">Geen</p>
+        <p className="mt-1 text-sm text-tekst-vaag">Geen</p>
       ) : (
         <ul className="mt-1 space-y-0.5 text-sm">
           {telling.map(({ nummer, aantal }) => (
             <li key={String(nummer)}>
               {/* Rugnummer alleen tonen voor spelers uit de kern (reservespelers hebben er geen) */}
-              {typeof nummer === 'number' && <span className="mr-1.5 font-display text-white/50">#{nummer}</span>}
+              {typeof nummer === 'number' && <span className="mr-1.5 font-display text-tekst-vaag">#{nummer}</span>}
               {naamVan(nummer)}
-              {aantal > 1 && <span className="ml-1 text-white/60">×{aantal}</span>}
+              {aantal > 1 && <span className="ml-1 text-tekst-zacht">×{aantal}</span>}
             </li>
           ))}
         </ul>
@@ -73,10 +73,10 @@ export function MatchRij({ match, index }: { match: Match; index: number }) {
       <TegenstanderBadge naam={match.tegenstander} />
       <div className="min-w-0 flex-1">
         <p className="font-display text-lg leading-tight text-balance uppercase sm:text-xl">{match.tegenstander}</p>
-        <p className="mt-0.5 flex items-center gap-1.5 text-xs text-white/70">
-          <ThuisUitIcoon thuis={match.thuis} className={`size-3.5 ${match.thuis ? 'text-red-600' : 'text-white/70'}`} />
+        <p className="mt-0.5 flex items-center gap-1.5 text-xs text-tekst/70">
+          <ThuisUitIcoon thuis={match.thuis} className={`size-3.5 ${match.thuis ? 'text-red-600' : 'text-tekst/70'}`} />
           {match.uur}
-          <span className="truncate text-white/50">{match.locatie}</span>
+          <span className="truncate text-tekst-vaag">{match.locatie}</span>
         </p>
       </div>
     </>
@@ -88,7 +88,7 @@ export function MatchRij({ match, index }: { match: Match; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.35, delay: index * 0.05 }}
-      className={`overflow-hidden rounded-xl border-l-4 bg-navy-900/80 ring-1 ring-white/10 ${
+      className={`overflow-hidden rounded-xl border-l-4 bg-navy-900/80 ring-1 ring-lijn ${
         r ? randKleur[r] : 'border-royal-700'
       }`}
     >
@@ -99,7 +99,7 @@ export function MatchRij({ match, index }: { match: Match; index: number }) {
             onClick={() => setOpen(!open)}
             aria-expanded={open}
             aria-controls={detailId}
-            className="flex w-full items-center gap-3 p-3 text-left transition hover:bg-white/5 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-orange-400"
+            className="flex w-full items-center gap-3 p-3 text-left transition hover:bg-tekst/5 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-orange-400"
           >
             {inhoud}
             <span className="font-display text-3xl tabular-nums" aria-label={`${match.uitslag.wij}–${match.uitslag.zij}, ${resultaatWoord[r]}`}>
@@ -107,7 +107,7 @@ export function MatchRij({ match, index }: { match: Match; index: number }) {
             </span>
             <motion.svg
               viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true"
-              className="size-4 shrink-0 text-white/50"
+              className="size-4 shrink-0 text-tekst-vaag"
               animate={{ rotate: open ? 180 : 0 }}
             >
               <path d="m6 9 6 6 6-6" />
@@ -123,7 +123,7 @@ export function MatchRij({ match, index }: { match: Match; index: number }) {
                 transition={{ duration: 0.25 }}
                 className="overflow-hidden"
               >
-                <div className="grid grid-cols-2 gap-4 border-t border-white/10 px-3 py-3 sm:pl-[7.5rem]">
+                <div className="grid grid-cols-2 gap-4 border-t border-lijn px-3 py-3 sm:pl-[7.5rem]">
                   <SpelerTelling titel="Doelpunten" nummers={goalsVan(match)} />
                   <SpelerTelling titel="Assists" nummers={assistsVan(match)} />
                 </div>

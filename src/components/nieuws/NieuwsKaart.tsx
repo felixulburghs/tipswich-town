@@ -7,11 +7,11 @@ import { SpelerChip } from './SpelerChip'
 /** Bericht in de nieuwslijst: datum, titel, intro, video of foto (indien aanwezig) en over wie het gaat. Kaart is klikbaar, behalve de video. */
 export function NieuwsKaart({ bericht }: { bericht: Nieuwsbericht }) {
   return (
-    <article className="relative rounded-2xl bg-navy-900/80 p-5 ring-1 ring-white/10 transition hover:bg-navy-900 hover:ring-white/25">
-      <div className="flex items-center gap-3 text-xs text-white/60">
+    <article className="relative rounded-2xl bg-navy-900/80 p-5 ring-1 ring-lijn transition hover:bg-navy-900 hover:ring-tekst/25">
+      <div className="flex items-center gap-3 text-xs text-tekst-zacht">
         <time dateTime={bericht.datum}>{nieuwsDatum(bericht)}</time>
         {bericht.video && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-red-600 px-2 py-0.5 font-semibold text-white">
+          <span className="inline-flex items-center gap-1 rounded-full bg-red-600 px-2 py-0.5 font-semibold text-tekst">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="size-3">
               <path d="M8 5v14l11-7z" />
             </svg>
@@ -25,7 +25,7 @@ export function NieuwsKaart({ bericht }: { bericht: Nieuwsbericht }) {
           {bericht.titel}
         </Link>
       </h2>
-      <p className="mt-2 text-white/80">{bericht.intro}</p>
+      <p className="mt-2 text-tekst/80">{bericht.intro}</p>
       {/* Video meteen in de kaart. relative z-10 legt hem boven de onzichtbare link-laag,
           zodat play/volume/fullscreen werken in plaats van naar het bericht te springen. */}
       {bericht.video && (
@@ -40,7 +40,7 @@ export function NieuwsKaart({ bericht }: { bericht: Nieuwsbericht }) {
           alt=""
           loading="lazy"
           decoding="async"
-          className="mt-4 max-h-80 w-full rounded-xl object-cover ring-1 ring-white/10"
+          className="mt-4 max-h-80 w-full rounded-xl object-cover ring-1 ring-lijn"
         />
       )}
       {bericht.spelers.length > 0 && (

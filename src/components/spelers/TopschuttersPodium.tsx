@@ -52,18 +52,18 @@ export function TopschuttersPodium() {
                 foto={s.speler.foto}
                 alt=""
                 zonderFoto="logo"
-                className="size-14 overflow-hidden rounded-full bg-navy-900 ring-2 ring-white/20 transition group-hover:ring-orange-400 sm:size-20"
+                className="size-14 overflow-hidden rounded-full bg-navy-900 ring-2 ring-tekst/20 transition group-hover:ring-orange-400 sm:size-20"
               />
               <span className="mt-2 font-display text-base leading-tight uppercase group-hover:text-orange-400 sm:text-xl">
                 {achternaam}
               </span>
-              <span className="text-xs text-white/60">#{s.speler.nummer}</span>
+              <span className="text-xs text-tekst-zacht">#{s.speler.nummer}</span>
             </Link>
             <div className={`mt-2 flex w-full flex-col items-center justify-start rounded-t-lg pt-2 ${hoogte} ${kleur}`}>
               <span className="font-display text-3xl leading-none sm:text-4xl">
                 <Teller waarde={s.goals} />
               </span>
-              <span className="text-xs text-white/70">{s.goals === 1 ? 'goal' : 'goals'}</span>
+              <span className="text-xs text-tekst/70">{s.goals === 1 ? 'goal' : 'goals'}</span>
             </div>
           </li>
         )

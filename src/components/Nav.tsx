@@ -31,7 +31,7 @@ export function Nav() {
               end={l.naar === '/'}
               className={({ isActive }) =>
                 `border-b-2 pb-0.5 transition-colors ${
-                  isActive ? 'border-red-600 text-white' : 'border-transparent text-white/60 hover:text-white'
+                  isActive ? 'border-red-600 text-tekst' : 'border-transparent text-tekst-zacht hover:text-tekst'
                 }`
               }
             >

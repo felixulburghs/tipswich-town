@@ -69,7 +69,7 @@ function LogoKnopInhoud() {
         <motion.span
           key={`ring-${klik}`}
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-1/2 -z-10 -mt-20 -ml-20 size-40 rounded-full border-2 border-white sm:-mt-24 sm:-ml-24 sm:size-48"
+          className="pointer-events-none absolute top-1/2 left-1/2 -z-10 -mt-20 -ml-20 size-40 rounded-full border-2 border-tekst sm:-mt-24 sm:-ml-24 sm:size-48"
           initial={{ scale: 0.6, opacity: 0.8 }}
           animate={{ scale: 1.7, opacity: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}

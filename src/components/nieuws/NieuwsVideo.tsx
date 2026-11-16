@@ -14,8 +14,8 @@ export function NieuwsVideo({ bestand, titel }: { bestand: string; titel: string
 
   if (kapot) {
     return (
-      <div className="grid aspect-video w-full place-items-center rounded-xl bg-navy-900/80 text-center ring-1 ring-white/10">
-        <p className="px-4 text-white/60">Video komt eraan</p>
+      <div className="grid aspect-video w-full place-items-center rounded-xl bg-navy-900/80 text-center ring-1 ring-lijn">
+        <p className="px-4 text-tekst-zacht">Video komt eraan</p>
       </div>
     )
   }
@@ -28,7 +28,7 @@ export function NieuwsVideo({ bestand, titel }: { bestand: string; titel: string
       preload="metadata"
       aria-label={`Video: ${titel}`}
       onError={() => setKapot(true)}
-      className="aspect-video w-full rounded-xl bg-black ring-1 ring-white/10"
+      className="aspect-video w-full rounded-xl bg-black ring-1 ring-lijn"
     />
   )
 }

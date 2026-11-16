@@ -14,7 +14,7 @@ export function Spelers() {
       <div className="mx-auto max-w-5xl">
         <h1 className="font-display text-5xl leading-none uppercase sm:text-7xl">
           <PenseelTitel>De kern</PenseelTitel>
-          <span className="mt-2 block text-3xl text-white/70 sm:text-4xl">{spelers.length} spelers</span>
+          <span className="mt-2 block text-3xl text-tekst/70 sm:text-4xl">{spelers.length} spelers</span>
         </h1>
 
         <section aria-labelledby="topschutters" className="mt-10">

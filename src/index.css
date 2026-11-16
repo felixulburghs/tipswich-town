@@ -10,6 +10,13 @@
   --color-orange-400: #f19029;
   --color-white: #f8f8f8;
 
+  /* Tekst en lijnen: los van "white", zodat een licht thema ze donker kan maken.
+     zacht/vaag zijn hetzelfde als vroeger text-white/60 en text-white/50. */
+  --color-tekst: #f8f8f8;
+  --color-tekst-zacht: color-mix(in oklab, var(--color-tekst) 60%, transparent);
+  --color-tekst-vaag: color-mix(in oklab, var(--color-tekst) 50%, transparent);
+  --color-lijn: color-mix(in oklab, var(--color-tekst) 10%, transparent);
+
   /* Resultaatkleuren (kalender): winst groen, gelijk grijs, verlies = red-600 */
   --color-winst: #1fa463;
   --color-gelijk: #8a8fa8;
@@ -43,7 +50,7 @@
 
 html {
   background: var(--color-navy-950);
-  color: var(--color-white);
+  color: var(--color-tekst);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }

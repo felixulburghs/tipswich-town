@@ -43,7 +43,7 @@ function Vakje({ waarde, label }: { waarde: number; label: string }) {
           </motion.span>
         </AnimatePresence>
       </div>
-      <span className="mt-1 text-xs text-white/60">
+      <span className="mt-1 text-xs text-tekst-zacht">
         {label}
       </span>
     </div>
@@ -60,7 +60,7 @@ export function Countdown({ match }: { match: Match }) {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.5 }}
-      className="w-full max-w-md text-left rounded-2xl bg-gradient-to-br from-royal-700 to-navy-900 p-5 shadow-2xl shadow-royal-500/20 ring-1 ring-white/10"
+      className="w-full max-w-md text-left rounded-2xl bg-gradient-to-br from-royal-700 to-navy-900 p-5 shadow-2xl shadow-royal-500/20 ring-1 ring-lijn"
     >
       <div className="flex items-center gap-2">
         <span
@@ -79,8 +79,8 @@ export function Countdown({ match }: { match: Match }) {
         {match.tegenstander}
       </p>
 
-      <p className="mt-2 text-sm text-white/80">{datumTekst(match)}</p>
-      <p className="text-sm text-white/60">{match.locatie}</p>
+      <p className="mt-2 text-sm text-tekst/80">{datumTekst(match)}</p>
+      <p className="text-sm text-tekst-zacht">{match.locatie}</p>
 
       <div className="mt-4 grid grid-cols-4 gap-2" role="timer" aria-live="off">
         <Vakje waarde={dagen} label="dagen" />

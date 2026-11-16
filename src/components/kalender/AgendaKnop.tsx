@@ -26,7 +26,7 @@ export function AgendaKnop({ match }: { match: Match }) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className={`${pil} text-white/80 ring-white/25 hover:bg-white/10 hover:text-white`}
+            className={`${pil} text-tekst/80 ring-tekst/25 hover:bg-tekst/10 hover:text-tekst`}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" className="size-4">
               <rect x="3" y="5" width="18" height="16" rx="2" />
@@ -49,7 +49,7 @@ export function AgendaKnop({ match }: { match: Match }) {
               target="_blank"
               rel="noreferrer"
               onClick={() => setOpen(false)}
-              className={`${pil} bg-white text-navy-950 ring-white hover:bg-white/90`}
+              className={`${pil} bg-tekst text-navy-950 ring-tekst hover:bg-tekst/90`}
             >
               Google Agenda
             </a>
@@ -59,7 +59,7 @@ export function AgendaKnop({ match }: { match: Match }) {
                 downloadIcs(match)
                 setOpen(false)
               }}
-              className={`${pil} text-white ring-white/40 hover:bg-white/10`}
+              className={`${pil} text-tekst ring-tekst/40 hover:bg-tekst/10`}
             >
               Apple / Outlook
             </button>
@@ -67,7 +67,7 @@ export function AgendaKnop({ match }: { match: Match }) {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Sluiten"
-              className="grid size-7 place-items-center rounded-full text-white/60 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-orange-400"
+              className="grid size-7 place-items-center rounded-full text-tekst-zacht hover:bg-tekst/10 hover:text-tekst focus-visible:outline-2 focus-visible:outline-orange-400"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" className="size-3.5">
                 <path d="M6 6l12 12M18 6 6 18" />

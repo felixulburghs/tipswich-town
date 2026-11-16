@@ -29,7 +29,7 @@ export function Kalender() {
       <div className="mx-auto max-w-3xl">
         <h1 className="font-display text-5xl leading-none uppercase sm:text-7xl">
           <PenseelTitel>Speelschema</PenseelTitel>
-          <span className="mt-2 block text-3xl text-white/70 sm:text-4xl">{seizoen}</span>
+          <span className="mt-2 block text-3xl text-tekst/70 sm:text-4xl">{seizoen}</span>
         </h1>
 
         <div className="mt-8">
@@ -42,13 +42,13 @@ export function Kalender() {
           </div>
         )}
 
-        <div className="mt-10 border-b border-white/10">
+        <div className="mt-10 border-b border-lijn">
           <FilterTabs actief={filter} kies={setFilter} />
         </div>
 
         <div className="mt-8 space-y-10">
           {maanden.length === 0 ? (
-            <p className="text-white/60">Geen matchen in deze selectie. Kies hierboven een andere filter.</p>
+            <p className="text-tekst-zacht">Geen matchen in deze selectie. Kies hierboven een andere filter.</p>
           ) : (
             maanden.map((g) => <MaandGroep key={g.maand} {...g} />)
           )}

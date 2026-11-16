@@ -13,9 +13,9 @@ import type { Speler } from '../types'
 
 function StatBlok({ waarde, label }: { waarde: number; label: string }) {
   return (
-    <div className="rounded-xl bg-navy-900/80 px-4 py-4 ring-1 ring-white/10">
+    <div className="rounded-xl bg-navy-900/80 px-4 py-4 ring-1 ring-lijn">
       <p className="font-display text-5xl leading-none sm:text-6xl">{waarde}</p>
-      <p className="mt-1 text-sm text-white/60">{label}</p>
+      <p className="mt-1 text-sm text-tekst-zacht">{label}</p>
     </div>
   )
 }
@@ -30,7 +30,7 @@ function BuurLink({ speler, richting }: { speler: Speler; richting: 'vorige' | '
   return (
     <Link
       to={`/spelers/${speler.nummer}`}
-      className={`flex items-center gap-2 rounded-full px-4 py-2 ring-1 ring-white/20 transition hover:bg-white/10 ${
+      className={`flex items-center gap-2 rounded-full px-4 py-2 ring-1 ring-tekst/20 transition hover:bg-tekst/10 ${
         richting === 'volgende' ? 'flex-row-reverse text-right' : ''
       }`}
     >
@@ -38,7 +38,7 @@ function BuurLink({ speler, richting }: { speler: Speler; richting: 'vorige' | '
         <path d={pijl} />
       </svg>
       <span className="flex flex-col leading-tight">
-        <span className="text-xs text-white/60">{richting === 'vorige' ? 'Vorige' : 'Volgende'}</span>
+        <span className="text-xs text-tekst-zacht">{richting === 'vorige' ? 'Vorige' : 'Volgende'}</span>
         <span className="font-display tracking-wide uppercase">
           #{speler.nummer} {naamDelen(speler).achternaam}
         </span>
@@ -81,7 +81,7 @@ export function SpelerDetail() {
         <section className="relative flex flex-col items-center gap-8 sm:flex-row sm:items-end">
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute -top-10 right-0 font-display text-[16rem] leading-none text-white/5 sm:text-[22rem]"
+            className="pointer-events-none absolute -top-10 right-0 font-display text-[16rem] leading-none text-tekst/5 sm:text-[22rem]"
           >
             {speler.nummer}
           </span>
@@ -92,19 +92,19 @@ export function SpelerDetail() {
           </motion.div>
 
           <div className="relative text-center sm:text-left">
-            <p className="text-lg text-white/70">{voornaam}</p>
+            <p className="text-lg text-tekst/70">{voornaam}</p>
             <h1 className="font-display text-6xl leading-none uppercase sm:text-8xl">{achternaam}</h1>
             <p className="mt-2 font-display text-2xl text-red-600">
               #{speler.nummer}
-              {speler.positie && <span className="ml-3 text-white/70">{speler.positie}</span>}
+              {speler.positie && <span className="ml-3 text-tekst/70">{speler.positie}</span>}
               {isKapitein(speler.nummer) && (
-                <span className="ml-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 align-middle font-sans text-sm font-semibold text-white">
+                <span className="ml-3 inline-flex items-center gap-1.5 rounded-full bg-tekst/10 px-3 py-1 align-middle font-sans text-sm font-semibold text-tekst">
                   <KapiteinIcoon className="size-5" />
                   Kapitein
                 </span>
               )}
               {isGeblesseerd(speler.status) && (
-                <span className="ml-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 align-middle font-sans text-sm font-semibold text-white">
+                <span className="ml-3 inline-flex items-center gap-1.5 rounded-full bg-tekst/10 px-3 py-1 align-middle font-sans text-sm font-semibold text-tekst">
                   <BlessureIcoon className="size-5" />
                   Geblesseerd
                 </span>
@@ -120,7 +120,7 @@ export function SpelerDetail() {
           <StatBlok waarde={stats.matchen} label="matchen" />
         </section>
 
-        {speler.funFact && <p className="mt-6 text-lg text-white/80">{speler.funFact}</p>}
+        {speler.funFact && <p className="mt-6 text-lg text-tekst/80">{speler.funFact}</p>}
 
         {/* Goals per match */}
         <section aria-labelledby="per-match" className="mt-10">
@@ -128,19 +128,19 @@ export function SpelerDetail() {
             Per match
           </h2>
           {stats.perMatch.length === 0 ? (
-            <p className="mt-3 text-white/60">Nog geen matchen gespeeld dit seizoen.</p>
+            <p className="mt-3 text-tekst-zacht">Nog geen matchen gespeeld dit seizoen.</p>
           ) : (
             <ul className="mt-3 space-y-2">
               {stats.perMatch.map(({ match, goals, assists }) => (
                 <li
                   key={`${match.datum}-${match.tegenstander}`}
-                  className="flex items-center gap-3 rounded-xl bg-navy-900/80 p-3 ring-1 ring-white/10"
+                  className="flex items-center gap-3 rounded-xl bg-navy-900/80 p-3 ring-1 ring-lijn"
                 >
                   <DatumBlok datum={aftrapVan(match)} />
                   <TegenstanderBadge naam={match.tegenstander} />
                   <div className="min-w-0 flex-1">
                     <p className="font-display text-lg leading-tight uppercase">{match.tegenstander}</p>
-                    <p className="text-xs text-white/60">
+                    <p className="text-xs text-tekst-zacht">
                       {meervoud(goals, 'goal', 'goals')}, {meervoud(assists, 'assist', 'assists')}
                     </p>
                   </div>

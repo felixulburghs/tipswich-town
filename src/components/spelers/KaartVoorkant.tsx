@@ -13,11 +13,11 @@ import { SpelerFoto } from './SpelerFoto'
 export function KaartVoorkant({ speler }: { speler: Speler }) {
   const { voornaam, achternaam } = naamDelen(speler)
   return (
-    <div className="@container relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-b from-royal-500 via-royal-700 to-navy-900 ring-1 ring-white/20">
+    <div className="@container relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-b from-royal-500 via-royal-700 to-navy-900 ring-1 ring-tekst/20">
       {/* Groot rugnummer, half doorzichtig op de achtergrond */}
       <span
         aria-hidden="true"
-        className="absolute -top-[4cqw] -right-[2cqw] font-display text-[62cqw] leading-none text-white/10"
+        className="absolute -top-[4cqw] -right-[2cqw] font-display text-[62cqw] leading-none text-tekst/10"
       >
         {speler.nummer}
       </span>
@@ -51,7 +51,7 @@ export function KaartVoorkant({ speler }: { speler: Speler }) {
 
       {/* Naam onderaan op een donkere band */}
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950 via-navy-950/90 to-transparent px-[6cqw] pt-[10cqw] pb-[5cqw] text-center">
-        <p className="text-[7cqw] font-semibold text-white/70">{voornaam}</p>
+        <p className="text-[7cqw] font-semibold text-tekst/70">{voornaam}</p>
         {/* Lange achternamen (bv. "Van Doorn Ballon") krijgen een kleinere letter zodat ze passen */}
         <p
           className={`truncate font-display leading-none uppercase ${

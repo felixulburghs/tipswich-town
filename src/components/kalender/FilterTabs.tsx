@@ -18,7 +18,7 @@ export function FilterTabs({ actief, kies }: { actief: Filter; kies: (f: Filter)
           aria-selected={f === actief}
           onClick={() => kies(f)}
           className={`relative shrink-0 px-2 py-2 font-display text-base tracking-wide uppercase sm:px-3 sm:text-lg transition-colors focus-visible:outline-2 focus-visible:outline-orange-400 ${
-            f === actief ? 'text-white' : 'text-white/50 hover:text-white/80'
+            f === actief ? 'text-tekst' : 'text-tekst-vaag hover:text-tekst/80'
           }`}
         >
           {f}
