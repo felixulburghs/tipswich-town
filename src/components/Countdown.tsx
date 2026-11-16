@@ -37,15 +37,13 @@ function Vakje({ waarde, label }: { waarde: number; label: string }) {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="absolute inset-0 text-center font-display text-4xl tabular-nums sm:text-5xl toutbien:[font-stretch:100%]"
+            className="absolute inset-0 text-center font-display text-4xl tabular-nums sm:text-5xl"
           >
             {tekst}
           </motion.span>
         </AnimatePresence>
       </div>
-      <span className="mt-1 text-xs text-tekst-zacht">
-        {label}
-      </span>
+      <span className="mt-1 text-xs text-tekst-zacht">{label}</span>
     </div>
   )
 }
@@ -75,7 +73,7 @@ export function Countdown({ match }: { match: Match }) {
         </h2>
       </div>
 
-      <p className="mt-3 font-display text-3xl leading-none text-balance uppercase sm:text-4xl">
+      <p className="mt-3 font-display text-3xl leading-none text-balance uppercase sm:text-4xl toutbien:[font-stretch:125%]">
         {match.tegenstander}
       </p>
 

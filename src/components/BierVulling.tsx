@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
 
@@ -6,7 +6,8 @@ const DUUR = 3 // seconden: vullen, even klotsen, weer leeglopen
 const willekeurig = (min: number, max: number) => min + Math.random() * (max - min)
 
 // Golfvorm (periode 300 op een breedte van 1200), gebruikt voor boven- en onderrand van het schuim
-const GOLF = 'C50 6 100 6 150 22s100 16 150 0 100-16 150 0 100 16 150 0 100-16 150 0 100 16 150 0 100-16 150 0 100 16 150 0'
+const GOLF =
+  'C50 6 100 6 150 22s100 16 150 0 100-16 150 0 100 16 150 0 100-16 150 0 100 16 150 0 100-16 150 0 100 16 150 0'
 
 /** Belletjes-textuur voor het schuim: een SVG-patroon van kleine cirkels. */
 function SchuimTextuur({ id }: { id: string }) {
@@ -24,7 +25,7 @@ function SchuimTextuur({ id }: { id: string }) {
  * Schuimkraag met golvende bovenrand: romige kleurverloop + belletjes-textuur erover.
  * Twee keer zo breed als het scherm, zodat hij oneindig kan opschuiven = schommelend schuim.
  */
-function Schuim() {
+export function Schuim() {
   const vorm = `M0 100V22${GOLF}v78z`
   return (
     <motion.svg
@@ -53,7 +54,7 @@ function Schuim() {
  * kant op dan de bovenrand, zodat schuim en bier tegen elkaar in lijken te deinen.
  * Zelfde golfvorm, verticaal gespiegeld (matrix 1 0 0 -1).
  */
-function SchuimOnderrand() {
+export function SchuimOnderrand() {
   return (
     <motion.svg
       viewBox="0 0 1200 40"
@@ -110,14 +111,7 @@ export function BierVulling() {
         <Schuim />
         <SchuimOnderrand />
 
-        {/* Het bier: goudgeel bovenaan, dieper amber onderaan */}
-        <div className="relative h-full overflow-hidden bg-gradient-to-b from-[#f9cf55]/75 via-[#eeac2c]/78 to-[#c97a12]/85">
-          {/* Diepte: randen iets donkerder, alsof je door een rond glas kijkt */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,transparent_45%,rgb(150_80_0/0.35))]" />
-          {/* Lichtstrepen op het glas */}
-          <div className="absolute inset-y-0 left-[9%] w-[7%] bg-gradient-to-r from-transparent via-white/25 to-transparent blur-sm" />
-          <div className="absolute inset-y-0 left-[86%] w-[3%] bg-gradient-to-r from-transparent via-white/20 to-transparent blur-[2px]" />
-
+        <BierLijf>
           {/* Koolzuurbelletjes */}
           {belletjes.map((b, i) => (
             <motion.span
@@ -129,10 +123,31 @@ export function BierVulling() {
               transition={{ duration: b.duur, delay: b.vertraging, ease: 'easeIn', repeat: Infinity }}
             />
           ))}
-        </div>
+        </BierLijf>
       </motion.div>
     </div>,
     document.body,
+  )
+}
+
+/**
+ * Het bier zelf: goudgeel bovenaan, dieper amber onderaan, met donkere randen en lichtstrepen op het glas.
+ * Gedeeld door het logo-bier (doorzichtig, je ziet de site erdoor) en de paginaovergang (vol = ondoorzichtig).
+ */
+export function BierLijf({ vol = false, children }: { vol?: boolean; children?: ReactNode }) {
+  return (
+    <div
+      className={`relative h-full overflow-hidden bg-gradient-to-b ${
+        vol ? 'from-[#f9cf55] via-[#eeac2c] to-[#c97a12]' : 'from-[#f9cf55]/75 via-[#eeac2c]/78 to-[#c97a12]/85'
+      }`}
+    >
+      {/* Diepte: randen iets donkerder, alsof je door een rond glas kijkt */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,transparent_45%,rgb(150_80_0/0.35))]" />
+      {/* Lichtstrepen op het glas */}
+      <div className="absolute inset-y-0 left-[9%] w-[7%] bg-gradient-to-r from-transparent via-white/25 to-transparent blur-sm" />
+      <div className="absolute inset-y-0 left-[86%] w-[3%] bg-gradient-to-r from-transparent via-white/20 to-transparent blur-[2px]" />
+      {children}
+    </div>
   )
 }
 

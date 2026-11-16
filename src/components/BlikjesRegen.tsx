@@ -157,7 +157,7 @@ export function BlikjesRegen() {
         transition={veeg}
       >
         <motion.p
-          className="text-center font-display text-[11vw] leading-[0.95] text-white uppercase sm:text-[min(8vw,7.5rem)]"
+          className="text-center font-display text-[11vw] leading-[0.95] text-white uppercase [font-stretch:125%] sm:text-[min(8vw,7.5rem)]"
           initial={minderBeweging ? false : { scale: 2.6, opacity: 0, rotate: -6 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
           transition={{ type: 'spring', stiffness: 520, damping: 22, mass: 0.9 }}

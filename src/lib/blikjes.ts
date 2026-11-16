@@ -122,6 +122,7 @@ export type BlikjesOpties = {
   stapelGrens?: number // 0.4 = de stapel blijft in de onderste 40%
   vulGaten?: boolean // extra blikjes gooien tot er geen gaten meer op de vloer zijn
   breedte?: number // standaard 9% van de breedte, tussen 56 en 104 px
+  vloerMarge?: number // px tussen vloer en onderkant van het canvas (standaard 6)
   obstakels?: HTMLElement[] // bv. de knop: blikjes botsen ertegen en stapelen errond
   bui?: { vloerWegNa?: number } // korte bui: alles meteen in twee golven; vloer weg na x ms (of nooit)
   sceneTijd?: number // ms sinds de titel verscheen; de blikjes beginnen op 0,5 s
@@ -160,7 +161,7 @@ export async function startBlikjes(o: BlikjesOpties) {
   const engine = Engine.create({ enableSleeping: true })
   engine.gravity.y = 1.6
   const wereld = engine.world
-  const vloerY = H - VLOER_MARGE
+  const vloerY = H - (o.vloerMarge ?? VLOER_MARGE)
   const dik = 200
   const vloer = Bodies.rectangle(B / 2, vloerY + dik / 2, B * 3, dik, { isStatic: true, friction: 0.9 })
   const muren = [
@@ -571,7 +572,9 @@ export async function startBlikjes(o: BlikjesOpties) {
     tekenZwevers(achter, achterlijst, achterSprite)
     tekenMidden()
     tekenZwevers(voor, voorlijst, voorSprite)
-    raf = requestAnimationFrame(stap)
+    // Een bui die blijft liggen (footer): als alles slaapt, niet elk frame blijven tekenen
+    const klaar = o.bui && !vallen && !gepland.length && !druppels.length && blikjes.every((k) => k.body.isSleeping)
+    if (!klaar) raf = requestAnimationFrame(stap)
   }
   raf = requestAnimationFrame(stap)
 

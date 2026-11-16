@@ -9,6 +9,7 @@
   --color-red-600: #d70719;
   --color-orange-400: #f19029;
   --color-white: #f8f8f8;
+  --color-marine: #080838; /* echt navy, in elk thema (footer) */
 
   /* Tekst en lijnen: los van "white", zodat een licht thema ze donker kan maken.
      zacht/vaag zijn hetzelfde als vroeger text-white/60 en text-white/50. */
@@ -62,10 +63,11 @@
   --color-orange-400: #d61022; /* kleine accenten en focusranden */
   --color-white: #fff9f2; /* "wit" = crème op rood */
 
-  --color-tekst: #121212;
-  --color-tekst-zacht: #57504a; /* effen kleur: zwart met 50–60% doorzichtigheid haalt geen AA op crème */
-  --color-tekst-vaag: #57504a;
-  --color-lijn: rgb(18 18 18 / 0.14);
+  /* Tekst en lijnen in navy, niet in zwart */
+  --color-tekst: #080838;
+  --color-tekst-zacht: #55557a; /* effen kleur: navy met 50–60% doorzichtigheid haalt geen AA op crème */
+  --color-tekst-vaag: #55557a;
+  --color-lijn: rgb(8 8 56 / 0.18);
 
   --font-display: 'Archivo', 'Arial Black', sans-serif;
 
@@ -82,16 +84,43 @@
   --tw-shadow: 0 0 #0000 !important;
 }
 
-/* In de "base"-laag, zodat een tekstkleur-klas op een element (bv. toutbien:text-white) altijd wint */
+/*
+ * Donkere vlakken in het thema: rood, navy (footer) en royal (spelerskaarten).
+ * Daarbinnen wordt alle tekst crème: "tekst op rood is altijd crème" is zo een regel, geen losse uitzonderingen.
+ */
+[data-theme='toutbien'] :is(.bg-red-600, [class~='toutbien:bg-red-600'], .bg-marine, .kaart-royal) {
+  --color-tekst: #fff9f2;
+  --color-tekst-zacht: #fff9f2;
+  --color-tekst-vaag: #fff9f2;
+  --color-lijn: rgb(255 249 242 / 0.3);
+  color: var(--color-tekst);
+}
+/* Royal #0848B8 enkel op de spelerskaarten (en in het logo): effen, zonder verloop */
+[data-theme='toutbien'] .kaart-royal {
+  --color-royal-500: #0848b8;
+  --color-royal-700: #0848b8;
+  --color-navy-900: #0848b8;
+  --color-navy-950: #0848b8;
+  --color-orange-400: #f19029; /* het kroontje blijft oranje op blauw */
+}
+
+/* In de "base"-laag, zodat een tekstkleur- of breedte-klas op een element altijd wint */
 @layer base {
+  /* Archivo italic 900; op normale breedte voor gewone tekst (namen in lijsten, cijfers, knoppen) ... */
   [data-theme='toutbien'] .font-display {
     font-style: italic;
     font-weight: 900;
-    font-stretch: 125%;
+    font-stretch: 100%;
   }
+  /* ... en op maximale breedte, rood op crème, voor titels */
   [data-theme='toutbien'] :is(h1, h2, h3).font-display,
   [data-theme='toutbien'] :is(h1, h2, h3) .font-display {
+    font-stretch: 125%;
     color: var(--color-red-600);
+  }
+  /* Titels op een donker vlak: crème */
+  [data-theme='toutbien'] :is(.bg-red-600, [class~='toutbien:bg-red-600'], .bg-marine, .kaart-royal) :is(h1, h2, h3) {
+    color: var(--color-tekst);
   }
 }
 

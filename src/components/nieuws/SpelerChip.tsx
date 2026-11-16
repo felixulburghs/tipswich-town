@@ -7,7 +7,8 @@ export function SpelerChip({ nummer, klikbaar = true }: { nummer: number; klikba
   const tekst = speler ? `${naamDelen(speler).voornaam} ${naamDelen(speler).achternaam}` : 'Onbekende speler'
   const inhoud = (
     <>
-      <span className="font-display text-red-600">#{nummer}</span> {tekst}
+      {/* Thema: donkerder rood, want rood op de getinte chip haalt geen AA op 12 px */}
+      <span className="font-display text-red-600 toutbien:text-red-800">#{nummer}</span> {tekst}
     </>
   )
   const stijl = 'inline-flex items-center gap-1 rounded-full bg-tekst/10 px-3 py-1 text-xs font-semibold'

@@ -1,3 +1,4 @@
+import { SPONSOR, SPONSOR_TAKEOVER } from '../../config'
 import { isKapitein, naamDelen } from '../../lib/spelers'
 import type { Speler } from '../../types'
 import { Kroon } from '../Kroon'
@@ -13,7 +14,8 @@ import { SpelerFoto } from './SpelerFoto'
 export function KaartVoorkant({ speler }: { speler: Speler }) {
   const { voornaam, achternaam } = naamDelen(speler)
   return (
-    <div className="@container relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-b from-royal-500 via-royal-700 to-navy-900 ring-1 ring-tekst/20">
+    // kaart-royal: in het Tout Bien-thema blijft de kaart royal blauw (zie index.css)
+    <div className="kaart-royal @container relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-b from-royal-500 via-royal-700 to-navy-900 ring-1 ring-tekst/20">
       {/* Groot rugnummer, half doorzichtig op de achtergrond */}
       <span
         aria-hidden="true"
@@ -36,16 +38,20 @@ export function KaartVoorkant({ speler }: { speler: Speler }) {
         </div>
       )}
 
-      <SpelerFoto
-        foto={speler.foto}
-        alt={speler.naam}
-        className="absolute inset-x-[8%] top-[14%] bottom-[22%]"
-      />
+      <SpelerFoto foto={speler.foto} alt={speler.naam} className="absolute inset-x-[8%] top-[14%] bottom-[22%]" />
 
       {/* Nog geen foto: schuine rode tape "Coming soon" op de plek van de foto */}
       {!speler.foto && (
         <span className="absolute inset-x-[-10%] top-[42%] -rotate-12 bg-red-600 py-[1.5cqw] text-center font-display text-[9cqw] tracking-wider uppercase shadow-lg shadow-navy-950/50">
           Coming soon
+        </span>
+      )}
+
+      {/* Sponsorlogo op de borst, waar een shirtsponsor zit (enkel tijdens de takeover) */}
+      {SPONSOR_TAKEOVER && (
+        // Op een crème plaatje, zoals een bedrukt logo: rood op royal blauw zie je anders amper
+        <span className="absolute top-[58%] left-1/2 -translate-x-1/2 -rotate-3 rounded-[1.5cqw] bg-white px-[2.5cqw] py-[2cqw]">
+          <img src={SPONSOR.logo} alt="" width={800} height={155} className="block w-[34cqw]" />
         </span>
       )}
 

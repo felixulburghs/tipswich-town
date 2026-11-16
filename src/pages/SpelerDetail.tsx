@@ -30,11 +30,18 @@ function BuurLink({ speler, richting }: { speler: Speler; richting: 'vorige' | '
   return (
     <Link
       to={`/spelers/${speler.nummer}`}
-      className={`flex items-center gap-2 rounded-full px-4 py-2 ring-1 ring-tekst/20 transition hover:bg-tekst/10 ${
+      className={`flex items-center gap-2 rounded-full px-4 py-2 ring-1 ring-tekst/20 transition hover:bg-tekst/10 toutbien:rounded-lg toutbien:bg-red-600 toutbien:text-white toutbien:ring-0 toutbien:[font-family:var(--font-display)] toutbien:font-black toutbien:italic toutbien:uppercase toutbien:hover:bg-red-800 ${
         richting === 'volgende' ? 'flex-row-reverse text-right' : ''
       }`}
     >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" className="size-4 shrink-0">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        aria-hidden="true"
+        className="size-4 shrink-0"
+      >
         <path d={pijl} />
       </svg>
       <span className="flex flex-col leading-tight">
@@ -58,7 +65,10 @@ export function SpelerDetail() {
       <main className="grid min-h-svh place-items-center bg-navy-950 px-4 text-center">
         <div>
           <p className="font-display text-4xl uppercase">Speler #{param} bestaat niet</p>
-          <Link to="/spelers" className="mt-4 inline-block underline decoration-red-600 decoration-2 underline-offset-4">
+          <Link
+            to="/spelers"
+            className="mt-4 inline-block underline decoration-red-600 decoration-2 underline-offset-4"
+          >
             Terug naar de kern
           </Link>
         </div>
@@ -139,7 +149,9 @@ export function SpelerDetail() {
                   <DatumBlok datum={aftrapVan(match)} />
                   <TegenstanderBadge naam={match.tegenstander} />
                   <div className="min-w-0 flex-1">
-                    <p className="font-display text-lg leading-tight uppercase">{match.tegenstander}</p>
+                    <p className="font-display text-lg leading-tight uppercase toutbien:[font-stretch:75%] toutbien:[overflow-wrap:anywhere]">
+                      {match.tegenstander}
+                    </p>
                     <p className="text-xs text-tekst-zacht">
                       {meervoud(goals, 'goal', 'goals')}, {meervoud(assists, 'assist', 'assists')}
                     </p>

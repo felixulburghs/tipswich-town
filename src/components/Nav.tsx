@@ -20,11 +20,18 @@ export function Nav() {
         <InstagramKnop />
       ) : (
         <NavLink to="/" aria-label="Tipswich Town, naar home">
-          <img src="/logo.webp" alt="" width={321} height={400} style={{ filter: 'var(--gloed-nav-logo)' }} className="h-14 w-auto sm:h-16" />
+          <img
+            src="/logo.webp"
+            alt=""
+            width={321}
+            height={400}
+            style={{ filter: 'var(--gloed-nav-logo)' }}
+            className="h-14 w-auto sm:h-16"
+          />
         </NavLink>
       )}
       {/* Tout Bien-thema: rode pil met crème pilknoppen; op gsm normale letterbreedte zodat alles past */}
-      <ul className="flex gap-3 font-display text-base tracking-wide uppercase sm:gap-5 sm:text-lg toutbien:gap-1 toutbien:rounded-full toutbien:bg-red-600 toutbien:p-1 toutbien:text-xs toutbien:tracking-normal toutbien:[font-stretch:100%] sm:toutbien:text-base sm:toutbien:[font-stretch:125%]">
+      <ul className="flex gap-3 font-display text-base tracking-wide uppercase sm:gap-5 sm:text-lg toutbien:gap-1 toutbien:rounded-full toutbien:bg-red-600 toutbien:p-1 toutbien:text-xs toutbien:tracking-normal sm:toutbien:text-base sm:toutbien:[font-stretch:125%]">
         {links.map((l) => (
           <li key={l.naar}>
             <NavLink

@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { SPONSOR, SPONSOR_KOP, SPONSOR_TAKEOVER } from '../config'
 import { reeks, seizoen, volgendeMatch } from '../lib/matchen'
 import { berichten, nieuwsDatum } from '../lib/nieuws'
 import { Countdown } from './Countdown'
 import { Kroon } from './Kroon'
+import { LetterKop } from './LetterKop'
 import { LogoKnop } from './LogoKnop'
 import { PenseelTitel } from './PenseelTitel'
 
@@ -20,7 +22,18 @@ export function Hero() {
         style={{ backgroundImage: 'var(--licht-zaal)' }}
       />
 
-      <LogoKnop />
+      {SPONSOR_TAKEOVER ? (
+        // Takeover: ons schild en het Tout Bien-logo naast elkaar, met een × ertussen
+        <div className="mb-5 flex items-center gap-3 sm:gap-6">
+          <LogoKnop />
+          <span aria-hidden="true" className="-mt-5 font-display text-4xl text-red-600 sm:text-6xl">
+            ×
+          </span>
+          <img src={SPONSOR.logo} alt={SPONSOR.naam} width={800} height={155} className="-mt-5 h-auto w-36 sm:w-60" />
+        </div>
+      ) : (
+        <LogoKnop />
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: -12 }}
@@ -43,14 +56,21 @@ export function Hero() {
         <PenseelTitel>Town</PenseelTitel>
       </motion.h1>
 
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="mt-5 font-display text-xl tracking-wide text-tekst/90 uppercase sm:text-2xl"
-      >
-        Up the Tips!
-      </motion.p>
+      {SPONSOR_TAKEOVER ? (
+        <LetterKop
+          tekst={SPONSOR_KOP}
+          className="mt-6 max-w-2xl font-display text-2xl leading-tight text-balance text-red-600 uppercase [font-stretch:125%] sm:text-4xl"
+        />
+      ) : (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="mt-5 font-display text-xl tracking-wide text-tekst/90 uppercase sm:text-2xl"
+        >
+          Up the Tips!
+        </motion.p>
+      )}
 
       {/* Laatste nieuwsbericht: hoog op de pagina zodat je het meteen ziet */}
       {laatsteNieuws && (
@@ -76,7 +96,14 @@ export function Hero() {
               <span className="line-clamp-2 font-display text-lg leading-tight uppercase">{laatsteNieuws.titel}</span>
               <span className="block text-xs text-tekst-zacht">{nieuwsDatum(laatsteNieuws)}</span>
             </span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" className="size-4 shrink-0 text-tekst/80">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              aria-hidden="true"
+              className="size-4 shrink-0 text-tekst/80"
+            >
               <path d="M9 6l6 6-6 6" />
             </svg>
           </Link>
@@ -97,7 +124,6 @@ export function Hero() {
       >
         Bekijk het volledige speelschema
       </Link>
-
     </header>
   )
 }

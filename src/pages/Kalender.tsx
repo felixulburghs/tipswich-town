@@ -27,7 +27,8 @@ export function Kalender() {
       style={{ backgroundImage: 'var(--licht-pagina)' }}
     >
       <div className="mx-auto max-w-3xl">
-        <h1 className="font-display text-5xl leading-none uppercase sm:text-7xl">
+        {/* "Speelschema" is lang: in het brede Tout Bien-lettertype schaalt hij mee met de schermbreedte */}
+        <h1 className="font-display text-5xl leading-none uppercase sm:text-7xl toutbien:text-[8vw] sm:toutbien:text-7xl">
           <PenseelTitel>Speelschema</PenseelTitel>
           <span className="mt-2 block text-3xl text-tekst/70 sm:text-4xl">{seizoen}</span>
         </h1>

@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react'
 import { MotionConfig, motion, useAnimate } from 'framer-motion'
+import { SPONSOR_TAKEOVER } from '../config'
 import { BIER_DUUR_MS, BierVulling } from './BierVulling'
+import { BlikjesBui } from './BlikjesBui'
 
 /** Het geluid dat speelt als je op het logo drukt. Zet het bestand in public/media/. */
 const GELUID = '/media/logo-geluid.mp3'
@@ -34,6 +36,7 @@ function LogoKnopInhoud() {
   // opnieuw aanmaken, zodat hun animatie bij elke klik van voren af aan speelt.
   const [klik, setKlik] = useState(0)
   const [bier, setBier] = useState(false) // staat het scherm vol bier?
+  const [bui, setBui] = useState(0) // tijdens de takeover: een korte blikjesbui na het bier (0 = geen)
   const bierTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   function speel() {
@@ -50,7 +53,10 @@ function LogoKnopInhoud() {
     // Scherm vol bier; opnieuw klikken tijdens het bier start de timer opnieuw
     setBier(true)
     clearTimeout(bierTimer.current)
-    bierTimer.current = setTimeout(() => setBier(false), BIER_DUUR_MS)
+    bierTimer.current = setTimeout(() => {
+      setBier(false)
+      if (SPONSOR_TAKEOVER) setBui((b) => b + 1)
+    }, BIER_DUUR_MS)
   }
 
   return (
@@ -110,6 +116,7 @@ function LogoKnopInhoud() {
 
       {/* Scherm vol bier (key={klik}: bij een nieuwe klik begint het vullen opnieuw) */}
       {bier && <BierVulling key={klik} />}
+      {bui > 0 && <BlikjesBui key={bui} klaar={() => setBui(0)} />}
     </motion.button>
   )
 }

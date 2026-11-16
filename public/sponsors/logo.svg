@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 96" role="img" aria-label="Tout Bien">
+  <!-- Tijdelijk tekst-logo. Vervang dit bestand door het echte logo van Tout Bien (zelfde naam: logo.svg). -->
+  <rect width="300" height="96" rx="12" fill="#d61022"/>
+  <text x="150" y="64" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-style="italic" font-weight="900" font-size="44" fill="#fff9f2">TOUT BIEN</text>
+</svg>

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { animate, useInView, useReducedMotion } from 'framer-motion'
+import { animate, motion, useInView, useReducedMotion } from 'framer-motion'
+import { SPONSOR_TAKEOVER } from '../../config'
 import { naamDelen, topschutters } from '../../lib/spelers'
 import { SpelerFoto } from './SpelerFoto'
 
@@ -25,6 +26,37 @@ function Teller({ waarde }: { waarde: number }) {
   }, [inBeeld, minderBeweging, waarde])
 
   return <span ref={ref}>{minderBeweging ? waarde : 0}</span>
+}
+
+/**
+ * Tijdens de takeover: één klein Pils-blikje per goal, gestapeld boven het podium.
+ * Ze vallen op hun plaats zodra het podium in beeld komt (whileInView), het ene na het andere.
+ * Rijen van 4, van onder naar boven gevuld (flex-wrap-reverse), zodat het echt een stapel is.
+ */
+function BlikjesStapel({ aantal }: { aantal: number }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="mt-2 flex w-full max-w-[5.5rem] flex-wrap-reverse justify-center gap-0.5 sm:max-w-28"
+    >
+      {Array.from({ length: aantal }, (_, i) => (
+        <motion.img
+          key={i}
+          src="/sponsors/can-pils.png"
+          alt=""
+          width={20}
+          height={36}
+          loading="lazy"
+          decoding="async"
+          className="h-8 w-auto sm:h-10"
+          initial={{ y: -160, opacity: 0, rotate: i % 2 ? 25 : -25 }}
+          whileInView={{ y: 0, opacity: 1, rotate: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ delay: i * 0.07, type: 'spring', stiffness: 420, damping: 18 }}
+        />
+      ))}
+    </div>
+  )
 }
 
 // Podiumvolgorde: 2e links, 1e in het midden, 3e rechts
@@ -59,11 +91,14 @@ export function TopschuttersPodium() {
               </span>
               <span className="text-xs text-tekst-zacht">#{s.speler.nummer}</span>
             </Link>
-            <div className={`mt-2 flex w-full flex-col items-center justify-start rounded-t-lg pt-2 ${hoogte} ${kleur}`}>
+            {SPONSOR_TAKEOVER && <BlikjesStapel aantal={s.goals} />}
+            <div
+              className={`mt-2 flex w-full flex-col items-center justify-start rounded-t-lg pt-2 ${hoogte} ${kleur}`}
+            >
               <span className="font-display text-3xl leading-none sm:text-4xl">
                 <Teller waarde={s.goals} />
               </span>
-              <span className="text-xs text-tekst/70">{s.goals === 1 ? 'goal' : 'goals'}</span>
+              <span className="text-xs text-tekst/70 toutbien:text-tekst">{s.goals === 1 ? 'goal' : 'goals'}</span>
             </div>
           </li>
         )
