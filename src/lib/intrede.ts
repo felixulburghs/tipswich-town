@@ -4,7 +4,7 @@ import { useInView, useReducedMotion, type TargetAndTransition, type Transition 
 /**
  * De intrede van de homepagina tijdens de takeover: één signaal voor de hele pagina.
  * - vrij: mag de cascade beginnen? Na de blikjesregen pas als het rode scherm wegtrekt,
- *   na een paginawissel (bier) pas als het schuim voorbij 60% zakt, bij een gewoon bezoek meteen.
+ *   na een paginawissel pas als de penseelrand van het rode vel voorbij de helft is, bij een gewoon bezoek meteen.
  * - kruis: mag de × tussen schild en logo al zichtbaar zijn? (Na de regen pas als de vliegende
  *   × uit de titel er precies op geland is.)
  */
@@ -14,7 +14,7 @@ export const useIntrede = () => useContext(IntredeContext)
 
 /**
  * Voor intredes die starten zodra iets in beeld komt: in beeld én de pagina is vrij.
- * (Anders speelt de animatie onzichtbaar af onder het bier van de paginawissel.)
+ * (Anders speelt de animatie onzichtbaar af onder het rode vel van de paginawissel.)
  */
 export function useInBeeldEnVrij(ref: RefObject<Element | null>, opties?: Parameters<typeof useInView>[1]) {
   const inBeeld = useInView(ref, { once: true, ...opties })

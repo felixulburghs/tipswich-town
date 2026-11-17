@@ -1,6 +1,6 @@
 /**
  * Bier als vloeistof, getekend op één canvas over het hele scherm (pas aangemaakt bij het eerste gebruik,
- * daarna hergebruikt). Gebruikt door de paginaovergang (giet) en het logo-bier (vul).
+ * daarna hergebruikt). Enkel voor het logo-bier (vul); de paginaovergang is het rode vel (components/Rouge.tsx).
  *
  * Geen blok dat verschuift, maar een NIVEAU dat stijgt en zakt:
  * - het oppervlak = niveau + golf (3 sinussen), die harder golft als het niveau snel beweegt
@@ -276,58 +276,6 @@ export function speel({
 
 const easeOutCubic = (u: number) => 1 - (1 - u) ** 3
 const easeInQuad = (u: number) => u * u
-const easeOutQuad = (u: number) => 1 - (1 - u) ** 2
-const klem01 = (u: number) => Math.min(1, Math.max(0, u))
-
-/** Tijden van de paginaovergang (ms). */
-export const GIET = { duur: 620, dicht: 290, drainBegin: 330, drainEind: 560, schuimAchter: 60 }
-
-/** Bier-niveau van de paginaovergang op tijdstip t (zonder het achterblijven van het schuim). */
-function gietNiveau(t: number) {
-  if (t <= 280) return 1.14 * easeOutCubic(t / 280) // snel vertrekken, zacht aankomen, iets voorbij...
-  if (t <= GIET.drainBegin) return 1.14 - 0.04 * easeOutCubic((t - 280) / 50) // ...en terugklotsen naar 110%
-  // leeglopen: vlot vertrekken en dan vertragen (zo is het schuim vroeg boven weg en past de lacing in de tijd)
-  return 1.1 - 1.28 * easeOutQuad(klem01((t - GIET.drainBegin) / (GIET.drainEind - GIET.drainBegin)))
-}
-
-/** Het schuim loopt 60 ms achter het bier aan, maar blijft een kraag: hooguit 22% van de schermhoogte erboven. */
-function gietSchuim(t: number) {
-  const bier = gietNiveau(t)
-  if (t <= GIET.drainBegin) return bier
-  return Math.max(bier, Math.min(gietNiveau(Math.max(GIET.drainBegin, t - GIET.schuimAchter)), bier + 0.22))
-}
-
-/**
- * De paginaovergang (± 620 ms): stijgen tot 110% (0–280), vol (280–330, wissel op 290),
- * leeglopen (330–620) met het schuim 60 ms achter het bier. richting: +1 vooruit, -1 terug (kanteling).
- * zichtbaar(): het schuim zakt voorbij 60%: de nieuwe pagina mag binnenkomen.
- */
-export function giet({ richting, dicht, zichtbaar }: { richting: number; dicht: () => void; zichtbaar: () => void }) {
-  const graden = (g: number) => (g * Math.PI) / 180
-  // moment waarop het schuim (60 ms achter het bier) voorbij 60% zakt
-  let t60 = GIET.drainBegin
-  while (t60 < GIET.duur && gietSchuim(t60) > 0.6) t60 += 5
-  return speel({
-    duur: GIET.duur,
-    lacing: Math.round(willekeurig(4, 8)),
-    gebeurtenissen: [
-      { t: GIET.dicht, doe: dicht },
-      { t: t60, doe: zichtbaar },
-    ],
-    stand: (t) => {
-      const bier = gietNiveau(t)
-      const schuim = gietSchuim(t)
-      // kantelen tijdens het stijgen (een paar graden in de richting van de navigatie), dan terugklotsen
-      const kanteling =
-        t <= 280
-          ? richting * graden(4) * Math.sin((Math.PI * t) / 280)
-          : t <= 420
-            ? -richting * graden(1.6) * Math.sin((Math.PI * (t - 280)) / 140)
-            : 0
-      return { bier, schuim, kanteling }
-    },
-  })
-}
 
 /**
  * Het logo-bier: het scherm loopt tot 86% vol, klotst, blijft even staan en loopt weer leeg (± 3 s).

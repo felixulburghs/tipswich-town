@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { MotionConfig, useReducedMotion } from 'framer-motion'
 import { BrowserRouter, Route, Routes, useLocation, useNavigationType } from 'react-router-dom'
 import { BlikjesRegen } from './components/BlikjesRegen'
 import { Footer } from './components/Footer'
 import { Nav } from './components/Nav'
+import { Rouge, type RougeVel } from './components/Rouge'
 import { SPONSOR_TAKEOVER } from './config'
-import { giet } from './lib/bier'
 import { IntredeContext, useIntrede } from './lib/intrede'
 import { zetKop } from './lib/seo'
 import { Home } from './pages/Home'
@@ -15,19 +15,14 @@ import { NieuwsBericht } from './pages/NieuwsBericht'
 import { SpelerDetail } from './pages/SpelerDetail'
 import { Spelers } from './pages/Spelers'
 
-/** Volgorde van de nav, voor de kanteling van het bier: een detailpagina staat net rechts van haar overzicht. */
-const VOLGORDE = ['/', '/kalender', '/spelers', '/nieuws']
-const plek = (pad: string) => {
-  const delen = pad.split('/').filter(Boolean)
-  return Math.max(0, VOLGORDE.indexOf('/' + (delen[0] ?? ''))) + (delen.length > 1 ? 0.5 : 0)
-}
-
 /**
- * De pagina's. Tijdens de takeover is elke paginawissel een "pour" (lib/bier.ts): het bier stijgt tot het
- * scherm vol is, dan wisselt de pagina (getoond) en springt de scroll naar boven, onzichtbaar eronder.
- * De intredes van de nieuwe pagina wachten tot het schuim voorbij 60% zakt (paginaVrij), zodat ze in beeld spelen.
- * - zelfde pagina of enkel een #anker: geen bier
- * - minder beweging: 100 ms uitfaden, wisselen, 100 ms infaden
+ * De pagina's. Tijdens de takeover is elke paginawissel een veeg van het rode vel (components/Rouge.tsx):
+ * het vel bedekt het scherm, dan wisselt de pagina (getoond) en springt de scroll naar boven, onzichtbaar eronder.
+ * De intredes van de nieuwe pagina wachten tot de penseelrand voorbij de helft is (paginaVrij).
+ * - zelfde pagina of enkel een #anker: geen veeg
+ * - terug/vooruit: het vel gaat van boven naar onder
+ * - een klik tijdens een veeg: die veeg neemt de nieuwste pagina mee, of er volgt er meteen nog één
+ * - minder beweging: 150 ms overvloeien (75 uit, wisselen, 75 in)
  * - zonder takeover: meteen wisselen, zoals vroeger
  * Bij een nieuwe pagina: terug naar boven scrollen en de <head> bijwerken (titel, beschrijving, ... uit lib/seo.ts).
  */
@@ -37,52 +32,78 @@ function Paginas() {
   const minderBeweging = useReducedMotion()
   const buiten = useIntrede()
   const [getoond, setGetoond] = useState(location)
+  const [volgende, setVolgende] = useState<{ plek: typeof location; omlaag: boolean } | null>(null)
   const [paginaVrij, setPaginaVrij] = useState(true)
   const [vervaagd, setVervaagd] = useState(false)
+  const vel = useRef<RougeVel>(null)
+  const lagenRef = useRef<HTMLDivElement>(null)
+  const doel = useRef(location) // de nieuwste locatie
+  const getoondPad = useRef(location.pathname)
+  const bezig = useRef(false)
   const pagina = SPONSOR_TAKEOVER ? getoond : location
 
+  // Eerst de nieuwe pagina verborgen opbouwen (al op haar plaats, enkel onzichtbaar), dán pas vegen:
+  // tijdens de veeg heeft de hoofdthread zo bijna niets te doen en is de wissel enkel "zichtbaar maken".
+  const veeg = (omlaag: boolean) => {
+    bezig.current = true
+    setVolgende({ plek: doel.current, omlaag })
+  }
   useEffect(() => {
+    if (!volgende) return
+    vel.current!.veeg({
+      omlaag: volgende.omlaag,
+      dicht: () => {
+        // De wissel meteen zelf in de DOM (zelfde eindstand als React straks): React heeft voor het afbreken
+        // van de oude pagina op een trage gsm langer nodig dan het scherm bedekt is.
+        const [oud, nieuw] = lagenRef.current!.children as unknown as HTMLElement[]
+        if (nieuw && doel.current === volgende.plek) {
+          oud.style.display = 'none'
+          nieuw.className = ''
+          nieuw.inert = false
+          window.scrollTo(0, 0)
+        }
+        setPaginaVrij(false)
+        setVolgende(null)
+        setGetoond(doel.current)
+        getoondPad.current = doel.current.pathname
+      },
+      zichtbaar: () => setPaginaVrij(true),
+    }).then(() => {
+      bezig.current = false
+      if (doel.current.pathname !== getoondPad.current) veeg(volgende.omlaag)
+    })
+  }, [volgende])
+
+  useEffect(() => {
+    doel.current = location
+    if (bezig.current) return
     if (!SPONSOR_TAKEOVER || location.pathname === getoond.pathname) {
       setGetoond(location)
       return
     }
-    let gestopt = false
     if (minderBeweging) {
       setVervaagd(true)
       const t = setTimeout(() => {
         setGetoond(location)
+        getoondPad.current = location.pathname
         setVervaagd(false)
-      }, 100)
+      }, 75)
       return () => clearTimeout(t)
     }
-    // Kanteling: in de richting van de nav-volgorde; terug/vooruit in de geschiedenis kantelt vanzelf andersom
-    const verschil = plek(location.pathname) - plek(getoond.pathname)
-    const richting = verschil !== 0 ? Math.sign(verschil) : navigatie === 'POP' ? -1 : 1
-    giet({
-      richting,
-      dicht: () => {
-        if (gestopt) return
-        setPaginaVrij(false)
-        setGetoond(location)
-      },
-      zichtbaar: () => !gestopt && setPaginaVrij(true),
-    })
-    return () => {
-      gestopt = true // een nieuwe klik midden in de overgang: die nieuwe overgang neemt het over
-      setPaginaVrij(true)
-    }
+    veeg(navigatie === 'POP')
     // eslint-disable-next-line react-hooks/exhaustive-deps -- enkel reageren op een nieuwe locatie
   }, [location])
 
-  // De browser scrollt in een React-app niet vanzelf naar boven (tijdens de takeover: onder het volle bier)
+  // De browser scrollt in een React-app niet vanzelf naar boven (tijdens de takeover: onder het rode vel)
   useEffect(() => {
     window.scrollTo(0, 0)
     zetKop(pagina.pathname)
   }, [pagina.pathname])
 
   const intrede = useMemo(() => ({ ...buiten, vrij: buiten.vrij && paginaVrij }), [buiten, paginaVrij])
-  const routes = (
-    <Routes location={pagina}>
+  const verborgen = useMemo(() => ({ ...buiten, vrij: false }), [buiten]) // de volgende pagina wacht in haar begin-stand
+  const routes = (plek: typeof location) => (
+    <Routes location={plek}>
       <Route path="/" element={<Home />} />
       <Route path="/kalender" element={<Kalender />} />
       <Route path="/spelers" element={<Spelers />} />
@@ -91,12 +112,23 @@ function Paginas() {
       <Route path="/nieuws/:slug" element={<NieuwsBericht />} />
     </Routes>
   )
-  if (!SPONSOR_TAKEOVER) return routes
+  // De getoonde pagina, en tijdens een veeg ook de volgende (verborgen). Per sleutel: bij de wissel blijft
+  // de volgende gewoon staan (enkel zichtbaar gemaakt) en verdwijnt de oude.
+  const lagen = volgende && volgende.plek.key !== getoond.key ? [getoond, volgende.plek] : [getoond]
+  if (!SPONSOR_TAKEOVER) return routes(location)
   return (
-    <IntredeContext.Provider value={intrede}>
+    <>
       {/* enkel voor "minder beweging": de korte overvloeier */}
-      <div style={{ opacity: vervaagd ? 0 : 1, transition: 'opacity 100ms linear' }}>{routes}</div>
-    </IntredeContext.Provider>
+      <div ref={lagenRef} style={{ opacity: vervaagd ? 0 : 1, transition: 'opacity 75ms linear' }}>
+        {lagen.map((l) => (
+          // de volgende: al opgemaakt bovenaan (zo kost de wissel geen opmaak meer), maar onzichtbaar en onbereikbaar
+          <div key={l.key} inert={l !== getoond} className={l === getoond ? '' : 'invisible absolute inset-x-0 top-0'}>
+            <IntredeContext.Provider value={l === getoond ? intrede : verborgen}>{routes(l)}</IntredeContext.Provider>
+          </div>
+        ))}
+      </div>
+      <Rouge ref={vel} />
+    </>
   )
 }
 
