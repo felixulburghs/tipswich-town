@@ -37,8 +37,9 @@ export function Looptekst() {
 
   const stuk = TEKST.repeat(4)
   return (
-    // mb-24: ruimte voor de blikjes die op de rand van de footer vallen
-    <div className="mb-24 overflow-hidden bg-red-600 py-3">
+    // Even veel ruimte boven (pb van de hero) als onder: 40 px, vanaf sm 56 px. Het sponsorblok eronder
+    // laat dan zijn eigen bovenruimte weg (index.css, data-looptekst).
+    <div data-looptekst className="mb-10 overflow-hidden bg-red-600 py-3 sm:mb-14">
       <p className="sr-only">Tout Bien × Tipswich Town × Up the Tips</p>
       <motion.div
         aria-hidden="true"

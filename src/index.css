@@ -186,6 +186,11 @@
   animation: penseelrand 0.6s ease-in-out forwards;
 }
 
+/* Sponsorblok direct na de looptekst (home, takeover): de band geeft de ruimte erboven al (Looptekst.tsx) */
+:root:has([data-looptekst]) [data-sponsorblok] {
+  padding-top: 0;
+}
+
 html {
   background: var(--color-navy-950);
   color: var(--color-tekst);

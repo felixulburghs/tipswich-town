@@ -29,7 +29,7 @@ export function Hero() {
   const { vrij, naRegen, kruis } = useIntrede()
 
   return (
-    <header className="relative isolate flex min-h-svh flex-col items-center justify-center overflow-hidden px-4 py-16 text-center">
+    <header className="relative isolate flex min-h-svh flex-col items-center justify-center overflow-hidden px-4 py-16 text-center toutbien:pb-10 sm:toutbien:pb-14">
       {/* "Sportzaal": blauwe lichtbundels van bovenaf op een donkere achtergrond */}
       <div
         aria-hidden="true"

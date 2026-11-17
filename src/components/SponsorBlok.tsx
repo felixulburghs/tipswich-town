@@ -45,7 +45,7 @@ function Logo({ s, opp }: { s: Sponsor; opp: [number, number] }) {
 export function SponsorBlok() {
   return (
     // toutbien:pb: ruimte voor de Pils-blikjes die tijdens de takeover op de rand van de footer blijven liggen
-    <section aria-label="Sponsors" className="px-4 pt-16 pb-12 text-center toutbien:pb-24">
+    <section data-sponsorblok aria-label="Sponsors" className="px-4 pt-16 pb-12 text-center toutbien:pb-24">
       <div className="mx-auto flex max-w-5xl flex-col items-center gap-10">
         {RIJEN.map(({ tier, label, opp }) => (
           <div key={tier} className="flex flex-col items-center gap-4">
