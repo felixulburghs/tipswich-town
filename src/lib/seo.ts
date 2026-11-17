@@ -119,7 +119,8 @@ export function paginaInfo(pad: string): PaginaInfo | null {
     const beeld = b.afbeelding ? SITE + nieuwsBestand(b.afbeelding) : DEEL_BEELD
     // Deel-previews (WhatsApp, ...) tonen niet overal WebP: daar enkel JPG/PNG, anders ons deelbeeld.
     // Google (JSON-LD hieronder) kan wel met WebP overweg.
-    const deelBeeld = /\.(jpe?g|png)$/i.test(beeld) ? beeld : DEEL_BEELD
+    const eigen = b.deelbeeld ? SITE + nieuwsBestand(b.deelbeeld) : beeld
+    const deelBeeld = /\.(jpe?g|png)$/i.test(eigen) ? eigen : DEEL_BEELD
     return {
       ...basis,
       soort: 'article',
@@ -133,7 +134,7 @@ export function paginaInfo(pad: string): PaginaInfo | null {
         description: b.intro,
         datePublished: b.datum,
         dateModified: b.datum,
-        image: [beeld],
+        image: [...new Set([beeld, eigen])],
         inLanguage: 'nl-BE',
         mainEntityOfPage: basis.url,
         author: { '@type': 'Organization', name: NAAM, url: `${SITE}/` },

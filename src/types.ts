@@ -49,6 +49,8 @@ export interface Nieuwsbericht {
   spelers: number[] // rugnummers van wie het bericht gaat
   video: string | null // bestandsnaam in public/media/
   afbeelding: string | null // bestandsnaam in public/media/
+  afbeeldingAlt?: string // beschrijving van de foto (leeg = decoratief)
+  deelbeeld?: string // JPG/PNG in public/media/ voor deel-previews (WhatsApp, Facebook, ...), want daar werkt WebP niet overal
 }
 
 /** Winst, Gelijk, Verlies */

@@ -63,10 +63,11 @@ export function NieuwsBericht() {
           {!bericht.video && bericht.afbeelding && (
             <img
               src={nieuwsBestand(bericht.afbeelding)}
-              alt=""
+              alt={bericht.afbeeldingAlt ?? ''}
               loading="lazy"
               decoding="async"
-              className="w-full rounded-xl ring-1 ring-lijn"
+              // staande foto's: nooit hoger dan het scherm, gecentreerd in de kolom
+              className="mx-auto max-h-[85svh] w-auto max-w-full rounded-xl ring-1 ring-lijn"
             />
           )}
 
