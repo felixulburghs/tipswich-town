@@ -14,7 +14,7 @@ const links = [
 
 /**
  * Bovenbalk met logo en links. NavLink weet zelf welke pagina actief is (isActive).
- * Op home staat het grote logo al in de hero, dus daar staat linksboven de Instagram-knop.
+ * Linksboven het schild; op home staat het grote logo al in de hero, dus daar de ronde Instagram-knop.
  */
 export function Nav() {
   const opHome = useLocation().pathname === '/'

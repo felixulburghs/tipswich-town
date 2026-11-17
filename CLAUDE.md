@@ -20,7 +20,7 @@ Instagram: @tipswich_town. Slogans: "Just the tip", "UP THE TIPS!", "Zaalvoetbal
 - Eén schakelaar: `SPONSOR_TAKEOVER` in `src/config.ts`. Daar staan ook `SPONSOR` (url, logo), `RESPONSIBLE_LINE` en `SPONSOR_KOP`.
 - `vite.config.ts` zet bij het bouwen `data-theme="toutbien"` en het lettertype Archivo in `index.html`; de kleuren staan in `src/index.css` onder `[data-theme='toutbien']`. Klassen die enkel in het thema gelden: `toutbien:...`.
 - Sponsorbestanden in `public/sponsors/` (enkel van Felix, nooit van hun site halen). De `.webp`-blikjes zijn verkleinde kopieën van de `.png`'s; maak ze opnieuw als die PNG's veranderen.
-- De sponsorstrook in de footer blijft staan als de takeover uit is.
+- Alle sponsors (naam, niveau, logo voor crème en voor navy, url, rel="sponsored" ja/nee) staan in `src/data/sponsors.ts`; het sponsorblok boven de footer (`SponsorBlok.tsx`) blijft staan als de takeover uit is.
 
 ## SEO en voorrenderen
 - `npm run build` rendert elke pagina voor naar echte HTML (`scripts/prerender.mjs` + `src/entry-server.tsx`); de browser neemt die over met `hydrateRoot`. Geen Next.js.

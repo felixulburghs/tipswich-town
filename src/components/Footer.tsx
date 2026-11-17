@@ -1,45 +1,37 @@
 import { useEffect, useRef } from 'react'
 import { useReducedMotion } from 'framer-motion'
-import { RESPONSIBLE_LINE, SPONSOR, SPONSOR_TAKEOVER } from '../config'
+import { RESPONSIBLE_LINE, SPONSOR_TAKEOVER } from '../config'
 import { INSTAGRAM_URL } from './InstagramKnop'
+import { SponsorBlok } from './SponsorBlok'
 
 /**
- * Footer op elke pagina, in navy (bg-marine, in beide thema's).
- * - Sponsorstrook met het logo van Tout Bien: blijft altijd staan, ook als de takeover uit is.
+ * Footer op elke pagina, in navy (bg-marine, in beide thema's), met daarboven het sponsorblok
+ * (SponsorBlok, alle sponsors uit src/data/sponsors.ts): blijft altijd staan, ook als de takeover uit is.
  * - RESPONSIBLE_LINE (config.ts): de verantwoord-drinken-zin van de sponsor.
  * - Tijdens de takeover tuimelen er een paar Pils-blikjes op de rand van de footer als je onderaan komt.
  */
 export function Footer() {
   return (
-    <footer className="relative bg-marine px-4 pt-10 pb-8 text-sm text-tekst">
-      {SPONSOR_TAKEOVER && <FooterBlikjes />}
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 sm:flex-row sm:justify-between">
-        <a
-          href={SPONSOR.url}
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-3 rounded-lg p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
-        >
-          <span className="text-tekst-zacht">Shirtsponsor</span>
-          {/* Rood logo op een crème plaatje: rood op navy is te weinig contrast */}
-          <span className="rounded-md bg-white px-2.5 py-2">
-            <img src={SPONSOR.logo} alt={SPONSOR.naam} width={800} height={155} className="block h-6 w-auto" />
-          </span>
-        </a>
-        <p className="text-center text-tekst-zacht sm:text-right">
-          Tipswich Town, zaalvoetbal in Leuven.{' '}
-          <a
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="underline underline-offset-2 hover:text-tekst"
-          >
-            @tipswich_town
-          </a>
-        </p>
-      </div>
-      <p className="mx-auto mt-6 max-w-5xl text-center text-xs text-tekst-zacht sm:text-left">{RESPONSIBLE_LINE}</p>
-    </footer>
+    <>
+      <SponsorBlok />
+      <footer className="relative bg-marine px-4 pt-10 pb-8 text-sm text-tekst">
+        {SPONSOR_TAKEOVER && <FooterBlikjes />}
+        <div className="mx-auto max-w-5xl">
+          <p className="text-center text-tekst-zacht sm:text-left">
+            Tipswich Town, zaalvoetbal in Leuven.{' '}
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-2 hover:text-tekst"
+            >
+              Volg ons op Instagram: @tipswich_town
+            </a>
+          </p>
+        </div>
+        <p className="mx-auto mt-6 max-w-5xl text-center text-xs text-tekst-zacht sm:text-left">{RESPONSIBLE_LINE}</p>
+      </footer>
+    </>
   )
 }
 

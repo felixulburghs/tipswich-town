@@ -1,7 +1,7 @@
 /**
  * Sponsor-takeover: zet op true en de hele site krijgt het Tout Bien-thema
  * (data-theme="toutbien" op <html>, zie index.css). Op false = de gewone site.
- * De sponsorstrook in de footer blijft altijd staan, ook met de takeover uit.
+ * Het sponsorblok boven de footer (src/data/sponsors.ts) blijft altijd staan, ook met de takeover uit.
  */
 export const SPONSOR_TAKEOVER = true
 
